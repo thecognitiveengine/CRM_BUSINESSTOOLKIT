@@ -13,7 +13,8 @@ import ProjectManager from './components/ProjectManager';
 import MarketResearch from './components/MarketResearch';
 import PitchDeckBuilder from './components/PitchDeckBuilder';
 import LegalDocuments from './components/LegalDocuments';
-import CalendarView from './components/Calendar/CalendarView';
+// ------- FIX: Comment/Remove CalendarView, file missing --------
+// import CalendarView from './components/Calendar/CalendarView';
 
 import Login from './components/Auth/Login';
 import Register from './components/Auth/Register';
@@ -49,8 +50,7 @@ const AppContent: React.FC = () => {
   const [activeTool, setActiveTool] = useState<Tool>('dashboard');
   const { user, loading: authLoading, signOut } = useAuth();
   const { isProfileSetup, selectedModules, companyName } = useUserProfile();
-  
-  // 🔄 Changed default from null to 'login' to always show Login first
+
   const [showAuth, setShowAuth] = useState<'login' | 'register'>('login');
 
   // 1️⃣ Loading spinner
@@ -129,8 +129,9 @@ const AppContent: React.FC = () => {
         return <PitchDeckBuilder />;
       case 'legal':
         return <LegalDocuments />;
-      case 'calendar':
-        return <CalendarView />;
+      // ---------- FIX: CalendarView removed because file is missing ----------
+      // case 'calendar':
+      //   return <CalendarView />;
       default:
         return <Dashboard onNavigate={setActiveTool} />;
     }
