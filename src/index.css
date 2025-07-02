@@ -1,0 +1,294 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 🆕 FIXED: Global CSS Variables for Aurora Borealis Theme */
+:root {
+    /* Core Aurora Borealis Interface Colors */
+    --aurora-bg-dark: #101015;
+    --aurora-card-bg-translucent: rgba(10, 10, 15, 0.4);
+    --aurora-border-light: rgba(255, 255, 255, 0.08);
+    --aurora-shadow-soft: rgba(0, 0, 0, 0.3);
+    --aurora-glow-subtle: rgba(100, 200, 255, 0.1);
+    --aurora-glow-vibrant: #66CCEE;
+    --aurora-glow-accent-green: #00FFCC;
+    --aurora-glow-accent-purple: #BB66FF;
+    --aurora-text-color: #E6F0FF;
+    --text-secondary: rgba(230, 240, 255, 0.7);
+    --danger: #DC143C;
+
+    /* Aurora Specific Form/Table/Section Backgrounds */
+    --aurora-section-bg: rgba(0, 0, 0, 0.2);
+    --aurora-input-bg: rgba(0, 0, 0, 0.1);
+    --aurora-input-border: rgba(255, 255, 255, 0.08);
+
+    /* Status Badge Colors */
+    --status-active-color-aurora: var(--aurora-glow-accent-green);
+    --status-planning-color-aurora: #FFA500;
+    --status-completed-color-aurora: var(--aurora-glow-vibrant);
+    --status-idea-color-aurora: #BB66FF;
+    --status-lead-color-aurora: #FFD700;
+    --status-past-color-aurora: #AEAEAE;
+    --status-scheduled-color-aurora: var(--aurora-glow-vibrant);
+    --status-published-color-aurora: var(--aurora-glow-accent-green);
+    --status-high-color-aurora: #DC143C;
+    --status-medium-color-aurora: #FFA500;
+    --status-low-color-aurora: var(--aurora-glow-accent-green);
+    --status-draft-color-aurora: #AEAEAE;
+    --status-sent-color-aurora: #0096FF;
+    --status-paid-color-aurora: var(--aurora-glow-accent-green);
+    --status-overdue-color-aurora: #DC143C;
+    --status-on-time-color-aurora: var(--aurora-glow-accent-green);
+
+    /* Deep AI Matrix Icon Colors */
+    --deep-ai-icon-blue: #00BFFF;
+    --deep-ai-icon-purple: #8A2BE2;
+    --deep-ai-icon-text-shadow-strong: 0 0 15px var(--deep-ai-icon-blue), 0 0 30px rgba(0, 191, 255, 0.4), 0 0 45px rgba(0, 191, 255, 0.2);
+    --deep-ai-icon-text-shadow-hover: 0 0 20px var(--deep-ai-icon-purple), 0 0 40px rgba(138, 43, 226, 0.5), 0 0 60px rgba(138, 43, 226, 0.3);
+}
+
+/* 🆕 FIXED: Basic reset and body styling */
+* { 
+    box-sizing: border-box; 
+    margin: 0; 
+    padding: 0; 
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--aurora-bg-dark);
+    color: var(--aurora-text-color);
+    background-image: url('https://framerusercontent.com/images/Y28bNIprVEz9Qy8OJJsq6ES10.jpg');
+    background-size: cover;
+    background-attachment: fixed;
+    background-position: center center;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+    overflow-y: auto;
+    min-height: 100vh;
+    width: 100vw;
+}
+
+/* 🆕 FIXED: Aurora Theme Custom Classes */
+.aurora-card {
+    background: var(--aurora-card-bg-translucent);
+    border: 1px solid var(--aurora-border-light);
+    box-shadow: 0 8px 32px var(--aurora-shadow-soft);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.aurora-glow {
+    box-shadow: 0 0 20px var(--aurora-glow-subtle);
+}
+
+.aurora-glow-hover:hover {
+    box-shadow: 0 0 30px var(--aurora-glow-vibrant);
+    transform: translateY(-2px);
+    transition: all 0.3s ease;
+}
+
+.aurora-input {
+    background: var(--aurora-input-bg);
+    border: 1px solid var(--aurora-input-border);
+    color: var(--aurora-text-color);
+    backdrop-filter: blur(5px);
+}
+
+.aurora-input:focus {
+    border-color: var(--aurora-glow-vibrant);
+    box-shadow: 0 0 15px rgba(102, 204, 238, 0.3);
+    outline: none;
+}
+
+.aurora-button-primary {
+    background: linear-gradient(135deg, var(--aurora-glow-vibrant), var(--aurora-glow-accent-green));
+    border: none;
+    color: var(--aurora-bg-dark);
+    font-weight: 600;
+    text-shadow: none;
+    box-shadow: 0 4px 15px rgba(102, 204, 238, 0.3);
+}
+
+.aurora-button-primary:hover {
+    box-shadow: 0 6px 25px rgba(102, 204, 238, 0.5);
+    transform: translateY(-1px);
+}
+
+.aurora-button-secondary {
+    background: var(--aurora-card-bg-translucent);
+    border: 1px solid var(--aurora-border-light);
+    color: var(--aurora-text-color);
+    backdrop-filter: blur(10px);
+}
+
+.aurora-button-secondary:hover {
+    border-color: var(--aurora-glow-vibrant);
+    box-shadow: 0 0 15px rgba(102, 204, 238, 0.2);
+}
+
+.aurora-text-primary {
+    color: var(--aurora-text-color);
+}
+
+.aurora-text-secondary {
+    color: var(--text-secondary);
+}
+
+.aurora-sidebar {
+    background: var(--aurora-card-bg-translucent);
+    border-right: 1px solid var(--aurora-border-light);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    position: relative;
+}
+
+.aurora-nav-item {
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--text-secondary);
+    transition: all 0.3s ease;
+}
+
+.aurora-nav-item:hover {
+    background: var(--aurora-section-bg);
+    border-color: var(--aurora-border-light);
+    color: var(--aurora-text-color);
+    box-shadow: 0 0 10px var(--aurora-glow-subtle);
+}
+
+.aurora-nav-item.active {
+    background: linear-gradient(135deg, var(--aurora-glow-vibrant), var(--aurora-glow-accent-green));
+    color: var(--aurora-bg-dark);
+    font-weight: 600;
+    box-shadow: 0 0 20px rgba(102, 204, 238, 0.4);
+}
+
+.aurora-status-badge {
+    backdrop-filter: blur(5px);
+    border: 1px solid var(--aurora-border-light);
+}
+
+.aurora-table {
+    background: var(--aurora-section-bg);
+    border: 1px solid var(--aurora-border-light);
+    backdrop-filter: blur(10px);
+}
+
+.aurora-table th {
+    background: var(--aurora-card-bg-translucent);
+    border-bottom: 1px solid var(--aurora-border-light);
+    color: var(--aurora-text-color);
+}
+
+.aurora-table td {
+    border-bottom: 1px solid var(--aurora-border-light);
+    color: var(--text-secondary);
+}
+
+.aurora-table tr:hover {
+    background: var(--aurora-glow-subtle);
+}
+
+.aurora-icon-glow {
+    filter: drop-shadow(0 0 8px var(--aurora-glow-vibrant));
+}
+
+.aurora-gradient-text {
+    background: linear-gradient(135deg, var(--aurora-glow-vibrant), var(--aurora-glow-accent-green));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* 🆕 FIXED: App Layout Container */
+.app-container {
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+/* 🆕 FIXED: Responsive design */
+@media (max-width: 768px) {
+    .app-container {
+        flex-direction: column;
+        min-height: auto;
+    }
+    
+    .aurora-sidebar {
+        width: 100% !important;
+        position: relative;
+    }
+    
+    body {
+        overflow-y: auto;
+    }
+}
+
+/* 🆕 FIXED: Custom scrollbar for Aurora theme */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--aurora-section-bg);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--aurora-glow-vibrant);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--aurora-glow-accent-green);
+}
+
+/* 🆕 FIXED: Ensure buttons are always accessible */
+.fixed-bottom-nav {
+    position: sticky;
+    bottom: 0;
+    background: var(--aurora-card-bg-translucent);
+    backdrop-filter: blur(15px);
+    border-top: 1px solid var(--aurora-border-light);
+    z-index: 50;
+}
+
+/* 🆕 FIXED: Improve button accessibility on mobile */
+@media (max-width: 640px) {
+    .aurora-button-primary,
+    .aurora-button-secondary {
+        min-height: 44px;
+        touch-action: manipulation;
+    }
+}
+
+/* 🆕 FIXED: Loading animations */
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.animate-spin {
+    animation: spin 1s linear infinite;
+}
+
+/* 🆕 FIXED: Utility classes */
+.line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
