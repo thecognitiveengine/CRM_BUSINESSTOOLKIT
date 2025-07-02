@@ -226,13 +226,13 @@ const AppContent: React.FC = () => {
   );
 };
 
-// Wrap with providers
+// OEM FIX : UserProfileProvider englobe AuthProvider pour permettre l’utilisation du contexte partout
 export default function App() {
   return (
-    <AuthProvider>
-      <UserProfileProvider>
+    <UserProfileProvider>
+      <AuthProvider>
         <AppContent />
-      </UserProfileProvider>
-    </AuthProvider>
+      </AuthProvider>
+    </UserProfileProvider>
   );
 }
