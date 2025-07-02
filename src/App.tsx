@@ -1,3 +1,6 @@
+// OEM: App.tsx - Branding Update (Cognitive Nexus / Nexus Cognitif)
+// Version multi-langue, annotation complète, structure OEM respectée
+
 import React, { useState } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { 
@@ -23,6 +26,21 @@ import ProfileSelection from './components/ProfileSelection/ProfileSelection';
 import { UserProfileProvider, useUserProfile } from './contexts/UserProfileContext';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 
+// 🆕 CENTRAL BRANDING
+const APP_NAME = {
+  en: 'Cognitive Nexus',
+  fr: 'Nexus Cognitif'
+};
+
+// Utility: returns current app name based on browser language
+function getAppName() {
+  const lang = (navigator.language || '').slice(0, 2);
+  if (lang === 'fr') return APP_NAME.fr;
+  return APP_NAME.en;
+}
+
+// Types
+// ----------------------------------------------------------------------
 type Tool =
   | 'dashboard'
   | 'business-plan'
@@ -46,13 +64,14 @@ const navigation = [
   { id: 'calendar' as Tool, name: 'Calendar', icon: CalendarIcon },
 ];
 
+// Main Content Component
 const AppContent: React.FC = () => {
   const [activeTool, setActiveTool] = useState<Tool>('dashboard');
   const { user, loading: authLoading, signOut } = useAuth();
   const { isProfileSetup, selectedModules, companyName } = useUserProfile();
-
   const [showAuth, setShowAuth] = useState<'login' | 'register'>('login');
 
+  // 1. Loading State
   if (authLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -67,6 +86,7 @@ const AppContent: React.FC = () => {
     );
   }
 
+  // 2. Auth flow
   if (!user) {
     if (showAuth === 'register') {
       return (
@@ -98,14 +118,17 @@ const AppContent: React.FC = () => {
     );
   }
 
+  // 3. Profile setup
   if (!isProfileSetup) {
     return <ProfileSelection />;
   }
 
+  // 4. Navigation filtered by selected modules
   const filteredNavigation = navigation.filter(
     (item) => item.id === 'dashboard' || selectedModules.includes(item.id)
   );
 
+  // 5. Renders the current tool
   const renderTool = () => {
     switch (activeTool) {
       case 'dashboard':
@@ -131,6 +154,10 @@ const AppContent: React.FC = () => {
     }
   };
 
+  // ----------------------------------------------------------------------
+  // OEM: Sidebar, branding, user menu and layout
+  // ----------------------------------------------------------------------
+
   return (
     <div className="app-container flex">
       {/* Sidebar */}
@@ -154,10 +181,10 @@ const AppContent: React.FC = () => {
             </div>
             <div>
               <h1 className="text-xl font-bold aurora-gradient-text">
-                EntrepreneKit
+                {getAppName()}
               </h1>
               <p className="text-sm aurora-text-secondary">
-                {companyName || 'Business Toolkit'}
+                {companyName || (getAppName() === APP_NAME.fr ? 'Boîte à outils d’affaires' : 'Business Toolkit')}
               </p>
             </div>
           </div>
@@ -220,7 +247,9 @@ const AppContent: React.FC = () => {
   );
 };
 
-// **OEM** : BrowserRouter englobe tout, puis UserProfileProvider, puis AuthProvider, puis AppContent
+// ----------------------------------------------------------------------
+// OEM - Wrapping the app in all providers and router
+// ----------------------------------------------------------------------
 export default function App() {
   return (
     <BrowserRouter>
