@@ -1,9 +1,8 @@
+// ✅ Ton AuthContext.tsx final multi-tenant
+
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { authService, type AuthUser } from '../services/authService';
 import type { Session } from '@supabase/supabase-js';
-import { supabase } from '../utils/supabaseClient';
-
-// ✅ Importe ton hook pour charger le profil
 import { useProfile } from '../hooks/useProfile';
 
 interface AuthContextType {
@@ -21,19 +20,13 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-interface AuthProviderProps {
-  children: ReactNode;
-}
-
-export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // ✅ Hook pour récupérer le profil
   const { profile, loading: profileLoading } = useProfile(user?.id || null);
 
-  // ✅ Role dynamique fusionné
   const role = user?.user_metadata?.role || profile?.role || 'member';
 
   useEffect(() => {
@@ -53,10 +46,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     initializeAuth();
 
     const { data: { subscription } } = authService.onAuthStateChange(
-      async (event, session) => {
-        console.log('Auth state changed:', event, session);
+      async (_event, session) => {
         setSession(session);
-
         if (session?.user) {
           setUser({
             id: session.user.id,
@@ -66,7 +57,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         } else {
           setUser(null);
         }
-
         setLoading(false);
       }
     );
@@ -78,57 +68,44 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const signIn = async (email: string, password: string) => {
     setLoading(true);
-    try {
-      const result = await authService.signIn(email, password);
-      return result.error ? { error: result.error } : {};
-    } catch (error) {
-      return { error: error instanceof Error ? error.message : 'Unknown error' };
-    } finally {
-      setLoading(false);
-    }
+    const result = await authService.signIn(email, password);
+    setLoading(false);
+    return result.error ? { error: result.error } : {};
   };
 
   const signUp = async (email: string, password: string, metadata?: any) => {
     setLoading(true);
-    try {
-      const result = await authService.signUp(email, password, metadata);
-      return result.error ? { error: result.error } : {};
-    } catch (error) {
-      return { error: error instanceof Error ? error.message : 'Unknown error' };
-    } finally {
-      setLoading(false);
-    }
+    const result = await authService.signUp(email, password, metadata);
+    setLoading(false);
+    return result.error ? { error: result.error } : {};
   };
 
   const signOut = async () => {
     setLoading(true);
-    try {
-      const result = await authService.signOut();
-      return result.error ? { error: result.error } : {};
-    } catch (error) {
-      return { error: error instanceof Error ? error.message : 'Unknown error' };
-    } finally {
-      setLoading(false);
-    }
+    const result = await authService.signOut();
+    setLoading(false);
+    return result.error ? { error: result.error } : {};
   };
 
   const resetPassword = async (email: string) => authService.resetPassword(email);
   const updatePassword = async (newPassword: string) => authService.updatePassword(newPassword);
 
-  const value: AuthContextType = {
-    user,
-    session,
-    profile,
-    role,
-    loading: loading || profileLoading,
-    signIn,
-    signUp,
-    signOut,
-    resetPassword,
-    updatePassword,
-  };
-
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={{
+      user,
+      session,
+      profile,
+      role,
+      loading: loading || profileLoading,
+      signIn,
+      signUp,
+      signOut,
+      resetPassword,
+      updatePassword
+    }}>
+      {children}
+    </AuthContext.Provider>
+  );
 };
 
 export const useAuth = () => {
