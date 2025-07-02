@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { BrowserRouter } from 'react-router-dom'; // ⬅️ AJOUT
 import { 
   BarChart3, FileText, Calculator, Users, Target, Briefcase,
   PlusCircle, Settings, Home, TrendingUp, CheckSquare,
