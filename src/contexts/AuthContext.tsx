@@ -1,11 +1,16 @@
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { authService, type AuthUser } from '../services/authService';
 import type { Session } from '@supabase/supabase-js';
+import { supabase } from '../utils/supabaseClient';
 
-// 🆕 FIXED: Complete authentication context
+// ✅ Importe ton hook pour charger le profil
+import { useProfile } from '../hooks/useProfile';
+
 interface AuthContextType {
   user: AuthUser | null;
   session: Session | null;
+  profile: any;
+  role: string | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<{ error?: string }>;
   signUp: (email: string, password: string, metadata?: any) => Promise<{ error?: string }>;
@@ -25,13 +30,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // ✅ Hook pour récupérer le profil
+  const { profile, loading: profileLoading } = useProfile(user?.id || null);
+
+  // ✅ Role dynamique fusionné
+  const role = user?.user_metadata?.role || profile?.role || 'member';
+
   useEffect(() => {
-    // 🆕 FIXED: Initialize auth state
     const initializeAuth = async () => {
       try {
         const currentSession = await authService.getCurrentSession();
         const currentUser = await authService.getCurrentUser();
-        
         setSession(currentSession);
         setUser(currentUser);
       } catch (error) {
@@ -43,13 +52,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
     initializeAuth();
 
-    // 🆕 FIXED: Listen to auth state changes
     const { data: { subscription } } = authService.onAuthStateChange(
       async (event, session) => {
         console.log('Auth state changed:', event, session);
-        
         setSession(session);
-        
+
         if (session?.user) {
           setUser({
             id: session.user.id,
@@ -59,7 +66,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         } else {
           setUser(null);
         }
-        
+
         setLoading(false);
       }
     );
@@ -73,10 +80,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setLoading(true);
     try {
       const result = await authService.signIn(email, password);
-      if (result.error) {
-        return { error: result.error };
-      }
-      return {};
+      return result.error ? { error: result.error } : {};
     } catch (error) {
       return { error: error instanceof Error ? error.message : 'Unknown error' };
     } finally {
@@ -88,64 +92,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setLoading(true);
     try {
       const result = await authService.signUp(email, password, metadata);
-      if (result.error) {
-        return { error: result.error };
-      }
-      return {};
+      return result.error ? { error: result.error } : {};
     } catch (error) {
-      return { error: error instanceof Error ? error.message : 'Unknown error' };
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const signOut = async () => {
-    setLoading(true);
-    try {
-      const result = await authService.signOut();
-      if (result.error) {
-        return { error: result.error };
-      }
-      return {};
-    } catch (error) {
-      return { error: error instanceof Error ? error.message : 'Unknown error' };
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const resetPassword = async (email: string) => {
-    return await authService.resetPassword(email);
-  };
-
-  const updatePassword = async (newPassword: string) => {
-    return await authService.updatePassword(newPassword);
-  };
-
-  const value: AuthContextType = {
-    user,
-    session,
-    loading,
-    signIn,
-    signUp,
-    signOut,
-    resetPassword,
-    updatePassword
-  };
-
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
-};
-
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
-};
-
-export default AuthContext;
+      return { error: error instanceof
