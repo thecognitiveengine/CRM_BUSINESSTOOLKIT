@@ -19,18 +19,25 @@ const Login: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   // === HANDLE SUBMIT ===
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
-    const { error } = await signIn(email, password);
-    if (error) {
-      setError(error);
-    } else {
-      // Redirige vers Dashboard après connexion (OEM behavior)
-      navigate('/dashboard');
-    }
-  };
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setError(null);
 
+  // Normalisation des entrées
+  const cleanEmail = email.trim().toLowerCase();
+  const cleanPassword = password.trim();
+
+  // Appel à l’API Supabase
+  const { error: loginError } = await signIn(cleanEmail, cleanPassword);
+
+  if (loginError) {
+    // Affichage de l’erreur
+    setError(loginError);
+  } else {
+    // Redirection en cas de succès
+    navigate('/dashboard');
+  }
+};
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
       <div className="w-full max-w-md">
