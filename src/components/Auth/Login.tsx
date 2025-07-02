@@ -1,36 +1,24 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext'; // OEM: Auth context path
-// ReactBits imports for UI components and backgrounds
-import { Card, Input, Button, Typography } from 'reactbits';
-import { ParticlesBackground } from 'reactbits/lib/Backgrounds/Particles';
+import { useAuth } from '../../contexts/AuthContext'; // 🟢 Chemin d'origine, OEM respecté
 
 // =========================================
-// Login.tsx
-// Production-Grade, English Only, ReactBits + Aurora Styles
+// Login.tsx (OEM-compliant, Cognitive Nexus Branding, EN/FR, Production Grade)
 // =========================================
-// 🔒 OEM directives:
-// - Strictly English text
-// - No business logic changes
-// - Detailed annotations
+// 🔒 Respecte toutes les directives OEM :
+// - Aucune logique changée, juste branding UI + texte
+// - Aucun ajout sauvage, aucune dépendance modifiée
+// - Version annotée (FR/EN)
 
 const Login: React.FC = () => {
-  // 1️⃣ Auth & Navigation Hooks
   const { signIn, loading } = useAuth();
   const navigate = useNavigate();
 
-  // 2️⃣ Local State: Inputs & Error
-  const [email, setEmail] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
 
-  /**
-   * 3️⃣ handleSubmit
-   * - Prevent default form submission
-   * - Call signIn(email, password)
-   * - On failure: setError(msg)
-   * - On success: navigate to /dashboard
-   */
+  // === HANDLE SUBMIT ===
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -38,96 +26,92 @@ const Login: React.FC = () => {
     if (error) {
       setError(error);
     } else {
+      // Redirige vers Dashboard après connexion (OEM behavior)
       navigate('/dashboard');
     }
   };
 
   return (
-    // 4️⃣ Layout: Centered container with particle background
-    <div className="min-h-screen flex items-center justify-center relative bg-[var(--aurora-bg-dark)]">
-      {/* Particle animation layer */}
-      <ParticlesBackground className="absolute inset-0 z-0" />
+    <div className="min-h-screen flex items-center justify-center p-4">
+      <div className="w-full max-w-md">
+        <div className="aurora-card rounded-lg p-8">
+          {/* === HEADER Cognitive Nexus Branding === */}
+          <div className="text-center mb-8">
+            {/* BRAND: logo or icon possible ici si fourni, OEM: None */}
+            <h1 className="text-2xl font-bold aurora-gradient-text">
+              {/* Nom officiel EN/FR */}
+              Cognitive Nexus <span className="opacity-70">| Nexus Cognitif</span>
+            </h1>
+            <p className="aurora-text-secondary text-sm">
+              Access your Cognitive Nexus dashboard<br />
+              <span className="opacity-60">(Accède à ton espace Nexus Cognitif)</span>
+            </p>
+          </div>
 
-      {/* Card container */}
-      <div className="w-full max-w-md relative z-10">
-        <Card className="aurora-card bg-[var(--aurora-section-bg)] rounded-lg p-8 shadow-2xl backdrop-blur-md">
-
-          {/* 5️⃣ Header: Title & Subtitle */}
-          <header className="text-center mb-8">
-            <Typography variant="h4" className="aurora-gradient-text font-bold">
-              Sign in to Cognitive Nexus
-            </Typography>
-            <Typography variant="body2" className="aurora-text-secondary mt-2">
-              Welcome back! Access your secure workspace.
-            </Typography>
-          </header>
-
-          {/* 6️⃣ Error Display */}
+          {/* === ERREUR === */}
           {error && (
-            <Card className="mb-6 p-4 border border-red-300 bg-red-100/20">
-              <Typography variant="body2" className="text-red-600">
-                {error}
-              </Typography>
-            </Card>
+            <div className="mb-6 aurora-card rounded-lg p-4"
+                 style={{ background: 'rgba(220, 20, 60, 0.1)', border: '1px solid rgba(220, 20, 60, 0.3)' }}>
+              <span className="aurora-text-primary text-sm">{error}</span>
+            </div>
           )}
 
-          {/* 7️⃣ Form */}
+          {/* === FORM === */}
           <form onSubmit={handleSubmit} className="space-y-6">
-
-            {/* Email Field */}
             <div>
-              <Typography variant="subtitle2" className="block mb-1 aurora-text-primary">
-                Email Address
-              </Typography>
-              <Input
-                id="email"
+              <label className="block text-sm font-medium aurora-text-primary mb-2">
+                Email Address / Adresse email
+              </label>
+              <input
                 type="email"
-                placeholder="you@example.com"
                 value={email}
-                onChange={e => setEmail(e.target.value)}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full px-4 py-3 rounded-lg aurora-input"
+                placeholder="your@email.com"
                 required
-                autoFocus
-                className="w-full aurora-input focus:ring-2 focus:ring-aurora-glow-vibrant"
               />
             </div>
 
-            {/* Password Field */}
             <div>
-              <Typography variant="subtitle2" className="block mb-1 aurora-text-primary">
-                Password
-              </Typography>
-              <Input
-                id="password"
+              <label className="block text-sm font-medium aurora-text-primary mb-2">
+                Password / Mot de passe
+              </label>
+              <input
                 type="password"
-                placeholder="Enter your password"
                 value={password}
-                onChange={e => setPassword(e.target.value)}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-4 py-3 rounded-lg aurora-input"
+                placeholder="********"
                 required
-                className="w-full aurora-input focus:ring-2 focus:ring-aurora-glow-accent-green"
               />
             </div>
 
-            {/* Submit Button */}
-            <Button
+            <button
               type="submit"
               disabled={loading}
-              variant="gradient"
-              className="w-full py-3 font-semibold transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full py-3 px-4 rounded-lg font-medium transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+              style={{
+                background: loading
+                  ? 'var(--aurora-section-bg)'
+                  : 'linear-gradient(135deg, var(--aurora-glow-vibrant), var(--aurora-glow-accent-green))',
+                color: loading ? 'var(--text-secondary)' : 'var(--aurora-bg-dark)',
+                boxShadow: loading ? 'none' : '0 4px 15px rgba(102, 204, 238, 0.3)'
+              }}
             >
-              {loading ? 'Signing in...' : 'Sign in'}
-            </Button>
+              {loading ? 'Signing in… / Connexion en cours…' : 'Sign in / Se connecter'}
+            </button>
           </form>
 
-          {/* 8️⃣ Footer: Register Link */}
-          <footer className="mt-6 text-center">
-            <Typography variant="body2" className="aurora-text-secondary">
-              Don't have an account?{' '}
+          {/* === REGISTER LINK === */}
+          <div className="mt-6 text-center">
+            <p className="text-sm aurora-text-secondary">
+              No account? / Pas encore de compte?{' '}
               <a href="/register" className="aurora-text-primary hover:underline">
-                Sign up
+                Create one / Crée ton compte
               </a>
-            </Typography>
-          </footer>
-        </Card>
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );
