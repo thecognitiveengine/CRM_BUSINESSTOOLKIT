@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BrowserRouter } from 'react-router-dom'; // ⬅️ AJOUT
+import { BrowserRouter } from 'react-router-dom';
 import { 
   BarChart3, FileText, Calculator, Users, Target, Briefcase,
   PlusCircle, Settings, Home, TrendingUp, CheckSquare,
@@ -14,8 +14,7 @@ import ProjectManager from './components/ProjectManager';
 import MarketResearch from './components/MarketResearch';
 import PitchDeckBuilder from './components/PitchDeckBuilder';
 import LegalDocuments from './components/LegalDocuments';
-// ------- FIX: Comment/Remove CalendarView, file missing --------
-// import CalendarView from './components/Calendar/CalendarView';
+// import CalendarView from './components/Calendar/CalendarView'; // Toujours commenté
 
 import Login from './components/Auth/Login';
 import Register from './components/Auth/Register';
@@ -54,7 +53,6 @@ const AppContent: React.FC = () => {
 
   const [showAuth, setShowAuth] = useState<'login' | 'register'>('login');
 
-  // 1️⃣ Loading spinner
   if (authLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -69,7 +67,6 @@ const AppContent: React.FC = () => {
     );
   }
 
-  // 2️⃣ Authentication flow
   if (!user) {
     if (showAuth === 'register') {
       return (
@@ -101,17 +98,14 @@ const AppContent: React.FC = () => {
     );
   }
 
-  // 3️⃣ Profile setup
   if (!isProfileSetup) {
     return <ProfileSelection />;
   }
 
-  // 4️⃣ Filter navigation by enabled modules
   const filteredNavigation = navigation.filter(
     (item) => item.id === 'dashboard' || selectedModules.includes(item.id)
   );
 
-  // 5️⃣ Render the selected tool
   const renderTool = () => {
     switch (activeTool) {
       case 'dashboard':
@@ -130,7 +124,6 @@ const AppContent: React.FC = () => {
         return <PitchDeckBuilder />;
       case 'legal':
         return <LegalDocuments />;
-      // ---------- FIX: CalendarView removed because file is missing ----------
       // case 'calendar':
       //   return <CalendarView />;
       default:
@@ -227,13 +220,15 @@ const AppContent: React.FC = () => {
   );
 };
 
-// OEM FIX : UserProfileProvider englobe AuthProvider pour permettre l’utilisation du contexte partout
+// **OEM** : BrowserRouter englobe tout, puis UserProfileProvider, puis AuthProvider, puis AppContent
 export default function App() {
   return (
-    <UserProfileProvider>
-      <AuthProvider>
-        <AppContent />
-      </AuthProvider>
-    </UserProfileProvider>
+    <BrowserRouter>
+      <UserProfileProvider>
+        <AuthProvider>
+          <AppContent />
+        </AuthProvider>
+      </UserProfileProvider>
+    </BrowserRouter>
   );
 }
