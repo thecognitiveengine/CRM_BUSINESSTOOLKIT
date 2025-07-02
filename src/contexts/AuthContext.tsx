@@ -94,4 +94,47 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const result = await authService.signUp(email, password, metadata);
       return result.error ? { error: result.error } : {};
     } catch (error) {
-      return { error: error instanceof
+      return { error: error instanceof Error ? error.message : 'Unknown error' };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const signOut = async () => {
+    setLoading(true);
+    try {
+      const result = await authService.signOut();
+      return result.error ? { error: result.error } : {};
+    } catch (error) {
+      return { error: error instanceof Error ? error.message : 'Unknown error' };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const resetPassword = async (email: string) => authService.resetPassword(email);
+  const updatePassword = async (newPassword: string) => authService.updatePassword(newPassword);
+
+  const value: AuthContextType = {
+    user,
+    session,
+    profile,
+    role,
+    loading: loading || profileLoading,
+    signIn,
+    signUp,
+    signOut,
+    resetPassword,
+    updatePassword,
+  };
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+};
+
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) throw new Error('useAuth must be used within an AuthProvider');
+  return context;
+};
+
+export default AuthContext;
