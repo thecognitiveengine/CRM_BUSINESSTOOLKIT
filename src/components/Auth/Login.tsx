@@ -1,24 +1,32 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext'; // 🟢 Chemin d'origine, OEM respecté
+import { useAuth } from '../../contexts/AuthContext'; // OEM: Auth context path
 
 // =========================================
-// Login.tsx (OEM-compliant, Cognitive Nexus Branding, EN/FR, Production Grade)
+// Login.tsx (Production Grade, English Only, Annotated)
 // =========================================
-// 🔒 Respecte toutes les directives OEM :
-// - Aucune logique changée, juste branding UI + texte
-// - Aucun ajout sauvage, aucune dépendance modifiée
-// - Version annotée (FR/EN)
+// 🔒 OEM directives:
+// - Strictly English text
+// - No logic changes, only UI text updates
+// - Fully annotated
 
 const Login: React.FC = () => {
+  // Hooks for authentication and navigation
   const { signIn, loading } = useAuth();
   const navigate = useNavigate();
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  // Local state: email, password, error message
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
 
-  // === HANDLE SUBMIT ===
+  /**
+   * handleSubmit
+   * - Prevent form default
+   * - Call signIn with email/password
+   * - On error: display message
+   * - On success: redirect to dashboard
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -26,91 +34,82 @@ const Login: React.FC = () => {
     if (error) {
       setError(error);
     } else {
-      // Redirige vers Dashboard après connexion (OEM behavior)
       navigate('/dashboard');
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-[var(--aurora-bg-dark)]">
+      {/* Container for centering */}
       <div className="w-full max-w-md">
-        <div className="aurora-card rounded-lg p-8">
-          {/* === HEADER Cognitive Nexus Branding === */}
-          <div className="text-center mb-8">
-            {/* BRAND: logo or icon possible ici si fourni, OEM: None */}
-            <h1 className="text-2xl font-bold aurora-gradient-text">
-              {/* Nom officiel EN/FR */}
-              Cognitive Nexus <span className="opacity-70">| Nexus Cognitif</span>
-            </h1>
-            <p className="aurora-text-secondary text-sm">
-              Access your Cognitive Nexus dashboard<br />
-              <span className="opacity-60">(Accède à ton espace Nexus Cognitif)</span>
-            </p>
-          </div>
+        {/* Card with Aurora styling */}
+        <div className="aurora-card bg-[var(--aurora-section-bg)] rounded-lg p-8 shadow-lg">
+          {/* Header: Title and subtitle */}
+          <header className="text-center mb-8">
+            <h1 className="text-2xl font-bold aurora-gradient-text">Sign in to Cognitive Nexus</h1>
+            <p className="aurora-text-secondary text-sm mt-2">Welcome back! Access your secure workspace.</p>
+          </header>
 
-          {/* === ERREUR === */}
+          {/* Error alert */}
           {error && (
-            <div className="mb-6 aurora-card rounded-lg p-4"
-                 style={{ background: 'rgba(220, 20, 60, 0.1)', border: '1px solid rgba(220, 20, 60, 0.3)' }}>
-              <span className="aurora-text-primary text-sm">{error}</span>
+            <div className="mb-6 p-4 rounded-lg border border-red-300 bg-red-100/20">
+              <p className="aurora-text-primary text-sm">{error}</p>
             </div>
           )}
 
-          {/* === FORM === */}
+          {/* Login form */}
           <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Email field */}
             <div>
-              <label className="block text-sm font-medium aurora-text-primary mb-2">
-                Email Address / Adresse email
+              <label htmlFor="email" className="block text-sm font-medium aurora-text-primary mb-1">
+                Email Address
               </label>
               <input
+                id="email"
                 type="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 rounded-lg aurora-input"
-                placeholder="your@email.com"
+                onChange={e => setEmail(e.target.value)}
+                placeholder="you@example.com"
                 required
+                className="w-full px-4 py-3 rounded-lg aurora-input focus:ring-2 focus:ring-aurora-glow-vibrant"
               />
             </div>
 
+            {/* Password field */}
             <div>
-              <label className="block text-sm font-medium aurora-text-primary mb-2">
-                Password / Mot de passe
+              <label htmlFor="password" className="block text-sm font-medium aurora-text-primary mb-1">
+                Password
               </label>
               <input
+                id="password"
                 type="password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 rounded-lg aurora-input"
-                placeholder="********"
+                onChange={e => setPassword(e.target.value)}
+                placeholder="Enter your password"
                 required
+                className="w-full px-4 py-3 rounded-lg aurora-input focus:ring-2 focus:ring-aurora-glow-accent-green"
               />
             </div>
 
+            {/* Submit button */}
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 px-4 rounded-lg font-medium transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-              style={{
-                background: loading
-                  ? 'var(--aurora-section-bg)'
-                  : 'linear-gradient(135deg, var(--aurora-glow-vibrant), var(--aurora-glow-accent-green))',
-                color: loading ? 'var(--text-secondary)' : 'var(--aurora-bg-dark)',
-                boxShadow: loading ? 'none' : '0 4px 15px rgba(102, 204, 238, 0.3)'
-              }}
+              className="w-full py-3 rounded-lg font-semibold aurora-button-primary transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? 'Signing in… / Connexion en cours…' : 'Sign in / Se connecter'}
+              {loading ? 'Signing in...' : 'Sign in'}
             </button>
           </form>
 
-          {/* === REGISTER LINK === */}
-          <div className="mt-6 text-center">
+          {/* Footer: Register link */}
+          <footer className="mt-6 text-center">
             <p className="text-sm aurora-text-secondary">
-              No account? / Pas encore de compte?{' '}
+              Don't have an account?{' '}
               <a href="/register" className="aurora-text-primary hover:underline">
-                Create one / Crée ton compte
+                Sign up
               </a>
             </p>
-          </div>
+          </footer>
         </div>
       </div>
     </div>
