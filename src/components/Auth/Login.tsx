@@ -1,14 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext'; // 🟢 Chemin d'origine, OEM respecté
-
-// =========================================
-// Login.tsx (OEM-compliant, Cognitive Nexus Branding, EN/FR, Production Grade)
-// =========================================
-// 🔒 Respecte toutes les directives OEM :
-// - Aucune logique changée, juste branding UI + texte
-// - Aucun ajout sauvage, aucune dépendance modifiée
-// - Version annotée (FR/EN)
+import { useAuth } from '../../contexts/AuthContext';
 
 const Login: React.FC = () => {
   const { signIn, loading } = useAuth();
@@ -18,15 +10,24 @@ const Login: React.FC = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
 
-  // === HANDLE SUBMIT ===
+  // 🆕 NEW: Test credentials for development
+  const fillTestCredentials = () => {
+    setEmail('test@example.com');
+    setPassword('testpassword123');
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    
+    console.log('Login attempt:', { email, hasPassword: !!password });
+    
     const { error } = await signIn(email, password);
     if (error) {
+      console.error('Login failed:', error);
       setError(error);
     } else {
-      // Redirige vers Dashboard après connexion (OEM behavior)
+      console.log('Login successful, navigating to dashboard');
       navigate('/dashboard');
     }
   };
@@ -35,11 +36,9 @@ const Login: React.FC = () => {
     <div className="min-h-screen flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="aurora-card rounded-lg p-8">
-          {/* === HEADER Cognitive Nexus Branding === */}
+          {/* Header */}
           <div className="text-center mb-8">
-            {/* BRAND: logo or icon possible ici si fourni, OEM: None */}
             <h1 className="text-2xl font-bold aurora-gradient-text">
-              {/* Nom officiel EN/FR */}
               Cognitive Nexus <span className="opacity-70">| Nexus Cognitif</span>
             </h1>
             <p className="aurora-text-secondary text-sm">
@@ -48,7 +47,21 @@ const Login: React.FC = () => {
             </p>
           </div>
 
-          {/* === ERREUR === */}
+          {/* Development Helper */}
+          {import.meta.env.DEV && (
+            <div className="mb-6 aurora-card rounded-lg p-4" 
+                 style={{ background: 'rgba(102, 204, 238, 0.1)', border: '1px solid rgba(102, 204, 238, 0.3)' }}>
+              <p className="text-xs aurora-text-secondary mb-2">Development Mode:</p>
+              <button
+                onClick={fillTestCredentials}
+                className="text-xs aurora-button-secondary px-3 py-1 rounded"
+              >
+                Fill Test Credentials
+              </button>
+            </div>
+          )}
+
+          {/* Error Display */}
           {error && (
             <div className="mb-6 aurora-card rounded-lg p-4"
                  style={{ background: 'rgba(220, 20, 60, 0.1)', border: '1px solid rgba(220, 20, 60, 0.3)' }}>
@@ -56,7 +69,7 @@ const Login: React.FC = () => {
             </div>
           )}
 
-          {/* === FORM === */}
+          {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label className="block text-sm font-medium aurora-text-primary mb-2">
@@ -102,7 +115,7 @@ const Login: React.FC = () => {
             </button>
           </form>
 
-          {/* === REGISTER LINK === */}
+          {/* Register Link */}
           <div className="mt-6 text-center">
             <p className="text-sm aurora-text-secondary">
               No account? / Pas encore de compte?{' '}
@@ -111,6 +124,16 @@ const Login: React.FC = () => {
               </a>
             </p>
           </div>
+
+          {/* Development Info */}
+          {import.meta.env.DEV && (
+            <div className="mt-6 pt-6 border-t border-gray-700">
+              <p className="text-xs aurora-text-secondary text-center">
+                Development Environment<br />
+                Create an account first if you don't have one
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </div>
