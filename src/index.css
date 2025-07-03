@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* 🆕 FIXED: Global CSS Variables for Aurora Borealis Theme */
+/* 🆕 ENHANCED: Global CSS Variables for Aurora Borealis Theme with Glass Effects */
 :root {
     /* Core Aurora Borealis Interface Colors */
     --aurora-bg-dark: #101015;
@@ -16,6 +16,12 @@
     --aurora-text-color: #E6F0FF;
     --text-secondary: rgba(230, 240, 255, 0.7);
     --danger: #DC143C;
+
+    /* 🆕 NEW: Glass Effect Variables */
+    --glass-bg: rgba(255, 255, 255, 0.1);
+    --glass-border: rgba(255, 255, 255, 0.2);
+    --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    --glass-blur: blur(16px);
 
     /* Aurora Specific Form/Table/Section Backgrounds */
     --aurora-section-bg: rgba(0, 0, 0, 0.2);
@@ -74,7 +80,193 @@ body {
     width: 100vw;
 }
 
-/* 🆕 FIXED: Aurora Theme Custom Classes */
+/* 🆕 ENHANCED: Glass Effect Components */
+.glass-card {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+}
+
+.glass-card-error {
+    background: rgba(220, 20, 60, 0.1);
+    border: 1px solid rgba(220, 20, 60, 0.3);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+}
+
+.glass-input {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: var(--aurora-text-color);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition: all 0.3s ease;
+}
+
+.glass-input:focus {
+    border-color: var(--aurora-glow-vibrant);
+    box-shadow: 0 0 20px rgba(102, 204, 238, 0.3);
+    outline: none;
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.glass-button-primary {
+    background: linear-gradient(135deg, var(--aurora-glow-vibrant), var(--aurora-glow-accent-green));
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: var(--aurora-bg-dark);
+    font-weight: 600;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    box-shadow: 0 4px 20px rgba(102, 204, 238, 0.3);
+}
+
+.glass-button-primary:hover {
+    box-shadow: 0 6px 30px rgba(102, 204, 238, 0.5);
+    transform: translateY(-2px);
+}
+
+.glass-button-secondary {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: var(--aurora-text-color);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+.glass-button-secondary:hover {
+    border-color: var(--aurora-glow-vibrant);
+    box-shadow: 0 0 20px rgba(102, 204, 238, 0.2);
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.glass-button-active {
+    background: linear-gradient(135deg, var(--aurora-glow-vibrant), var(--aurora-glow-accent-green));
+    color: var(--aurora-bg-dark);
+    font-weight: 600;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    box-shadow: 0 0 25px rgba(102, 204, 238, 0.4);
+}
+
+.glass-sidebar {
+    background: rgba(10, 10, 15, 0.6);
+    border-right: 1px solid var(--glass-border);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    position: relative;
+}
+
+.glass-nav-item {
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--text-secondary);
+    transition: all 0.3s ease;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+}
+
+.glass-nav-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: var(--aurora-text-color);
+    box-shadow: 0 0 15px var(--aurora-glow-subtle);
+}
+
+.glass-nav-item.active {
+    background: linear-gradient(135deg, var(--aurora-glow-vibrant), var(--aurora-glow-accent-green));
+    color: var(--aurora-bg-dark);
+    font-weight: 600;
+    box-shadow: 0 0 25px rgba(102, 204, 238, 0.4);
+}
+
+.glass-icon-container {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+.glass-icon-button {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    transition: all 0.3s ease;
+}
+
+.glass-icon-button:hover {
+    background: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 10px rgba(102, 204, 238, 0.3);
+}
+
+.glass-avatar {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+.glass-badge {
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+}
+
+.glass-tag {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+}
+
+.glass-glow:hover {
+    box-shadow: 0 0 30px var(--aurora-glow-vibrant);
+    transform: translateY(-2px);
+    transition: all 0.3s ease;
+}
+
+.glass-link {
+    transition: all 0.3s ease;
+}
+
+.glass-link:hover {
+    text-shadow: 0 0 10px var(--aurora-glow-vibrant);
+}
+
+.glass-user-menu {
+    background: rgba(10, 10, 15, 0.8);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+}
+
+/* 🆕 NEW: Star Border Animation */
+.star-border {
+    background: linear-gradient(45deg, 
+        transparent 30%, 
+        var(--aurora-glow-vibrant) 50%, 
+        transparent 70%
+    );
+    background-size: 200% 200%;
+    animation: star-border-animation 2s linear infinite;
+}
+
+@keyframes star-border-animation {
+    0% {
+        background-position: -200% -200%;
+    }
+    100% {
+        background-position: 200% 200%;
+    }
+}
+
+/* 🆕 PRESERVED: Original Aurora Theme Custom Classes */
 .aurora-card {
     background: var(--aurora-card-bg-translucent);
     border: 1px solid var(--aurora-border-light);
@@ -221,7 +413,7 @@ body {
         min-height: auto;
     }
     
-    .aurora-sidebar {
+    .aurora-sidebar, .glass-sidebar {
         width: 100% !important;
         position: relative;
     }
@@ -262,7 +454,9 @@ body {
 /* 🆕 FIXED: Improve button accessibility on mobile */
 @media (max-width: 640px) {
     .aurora-button-primary,
-    .aurora-button-secondary {
+    .aurora-button-secondary,
+    .glass-button-primary,
+    .glass-button-secondary {
         min-height: 44px;
         touch-action: manipulation;
     }

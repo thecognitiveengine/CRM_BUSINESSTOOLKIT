@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import { Sparkles } from 'lucide-react';
 
 const Login: React.FC = () => {
   const { signIn, loading } = useAuth();
@@ -9,12 +10,6 @@ const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
-
-  // 🆕 NEW: Test credentials for development
-  const fillTestCredentials = () => {
-    setEmail('test@example.com');
-    setPassword('testpassword123');
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,51 +30,35 @@ const Login: React.FC = () => {
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
       <div className="w-full max-w-md">
-        <div className="aurora-card rounded-lg p-8">
-          {/* Header */}
+        <div className="glass-card rounded-2xl p-8 backdrop-blur-xl border border-white/20 shadow-2xl">
+          {/* 🆕 ENHANCED: Centered title without French */}
           <div className="text-center mb-8">
-            <h1 className="text-2xl font-bold aurora-gradient-text">
-              Cognitive Nexus <span className="opacity-70">| Nexus Cognitif</span>
+            <h1 className="text-3xl font-bold aurora-gradient-text mb-2">
+              Cognitive Nexus
             </h1>
             <p className="aurora-text-secondary text-sm">
-              Access your Cognitive Nexus dashboard<br />
-              <span className="opacity-60">(Accède à ton espace Nexus Cognitif)</span>
+              Access your business intelligence dashboard
             </p>
           </div>
 
-          {/* Development Helper */}
-          {import.meta.env.DEV && (
-            <div className="mb-6 aurora-card rounded-lg p-4" 
-                 style={{ background: 'rgba(102, 204, 238, 0.1)', border: '1px solid rgba(102, 204, 238, 0.3)' }}>
-              <p className="text-xs aurora-text-secondary mb-2">Development Mode:</p>
-              <button
-                onClick={fillTestCredentials}
-                className="text-xs aurora-button-secondary px-3 py-1 rounded"
-              >
-                Fill Test Credentials
-              </button>
-            </div>
-          )}
-
-          {/* Error Display */}
+          {/* 🆕 ENHANCED: Error Display with glass effect */}
           {error && (
-            <div className="mb-6 aurora-card rounded-lg p-4"
-                 style={{ background: 'rgba(220, 20, 60, 0.1)', border: '1px solid rgba(220, 20, 60, 0.3)' }}>
+            <div className="mb-6 glass-card-error rounded-lg p-4 backdrop-blur-sm border border-red-500/30">
               <span className="aurora-text-primary text-sm">{error}</span>
             </div>
           )}
 
-          {/* Form */}
+          {/* 🆕 ENHANCED: Form with glass inputs */}
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label className="block text-sm font-medium aurora-text-primary mb-2">
-                Email Address / Adresse email
+                Email Address
               </label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 rounded-lg aurora-input"
+                className="glass-input w-full px-4 py-3 rounded-lg backdrop-blur-sm border border-white/20 bg-white/10"
                 placeholder="your@email.com"
                 required
               />
@@ -87,53 +66,41 @@ const Login: React.FC = () => {
 
             <div>
               <label className="block text-sm font-medium aurora-text-primary mb-2">
-                Password / Mot de passe
+                Password
               </label>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 rounded-lg aurora-input"
+                className="glass-input w-full px-4 py-3 rounded-lg backdrop-blur-sm border border-white/20 bg-white/10"
                 placeholder="********"
                 required
               />
             </div>
 
+            {/* 🆕 ENHANCED: Glass button with star border animation */}
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 px-4 rounded-lg font-medium transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-              style={{
-                background: loading
-                  ? 'var(--aurora-section-bg)'
-                  : 'linear-gradient(135deg, var(--aurora-glow-vibrant), var(--aurora-glow-accent-green))',
-                color: loading ? 'var(--text-secondary)' : 'var(--aurora-bg-dark)',
-                boxShadow: loading ? 'none' : '0 4px 15px rgba(102, 204, 238, 0.3)'
-              }}
+              className="glass-button-primary w-full py-3 px-4 rounded-lg font-medium transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden group"
             >
-              {loading ? 'Signing in… / Connexion en cours…' : 'Sign in / Se connecter'}
+              <div className="star-border absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <div className="relative z-10 flex items-center justify-center space-x-2">
+                <Sparkles className="w-4 h-4" />
+                <span>{loading ? 'Signing in...' : 'Sign In'}</span>
+              </div>
             </button>
           </form>
 
-          {/* Register Link */}
+          {/* 🆕 ENHANCED: Register Link with glass effect */}
           <div className="mt-6 text-center">
             <p className="text-sm aurora-text-secondary">
-              No account? / Pas encore de compte?{' '}
-              <a href="/register" className="aurora-text-primary hover:underline">
-                Create one / Crée ton compte
+              No account?{' '}
+              <a href="/register" className="aurora-text-primary hover:underline glass-link">
+                Create one
               </a>
             </p>
           </div>
-
-          {/* Development Info */}
-          {import.meta.env.DEV && (
-            <div className="mt-6 pt-6 border-t border-gray-700">
-              <p className="text-xs aurora-text-secondary text-center">
-                Development Environment<br />
-                Create an account first if you don't have one
-              </p>
-            </div>
-          )}
         </div>
       </div>
     </div>

@@ -1,4 +1,4 @@
-// OEM: App.tsx - Branding Update (Cognitive Nexus / Nexus Cognitif)
+// OEM: App.tsx - Enhanced with CRM Integration
 // Version multi-langue, annotation complète, structure OEM respectée
 
 import React, { useState } from 'react';
@@ -6,7 +6,8 @@ import { BrowserRouter } from 'react-router-dom';
 import { 
   BarChart3, FileText, Calculator, Users, Target, Briefcase,
   PlusCircle, Settings, Home, TrendingUp, CheckSquare,
-  FileBarChart, Lightbulb, Scale, Calendar as CalendarIcon
+  FileBarChart, Lightbulb, Scale, Calendar as CalendarIcon,
+  UserCheck // 🆕 NEW: CRM icon
 } from 'lucide-react';
 
 import Dashboard from './components/Dashboard';
@@ -17,7 +18,7 @@ import ProjectManager from './components/ProjectManager';
 import MarketResearch from './components/MarketResearch';
 import PitchDeckBuilder from './components/PitchDeckBuilder';
 import LegalDocuments from './components/LegalDocuments';
-// import CalendarView from './components/Calendar/CalendarView'; // Toujours commenté
+import CRMDashboard from './components/CRM/CRMDashboard'; // 🆕 NEW: CRM component
 
 import Login from './components/Auth/Login';
 import Register from './components/Auth/Register';
@@ -26,18 +27,8 @@ import ProfileSelection from './components/ProfileSelection/ProfileSelection';
 import { UserProfileProvider, useUserProfile } from './contexts/UserProfileContext';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 
-// 🆕 CENTRAL BRANDING
-const APP_NAME = {
-  en: 'Cognitive Nexus',
-  fr: 'Nexus Cognitif'
-};
-
-// Utility: returns current app name based on browser language
-function getAppName() {
-  const lang = (navigator.language || '').slice(0, 2);
-  if (lang === 'fr') return APP_NAME.fr;
-  return APP_NAME.en;
-}
+// 🆕 CENTRAL BRANDING - Simplified without French
+const APP_NAME = 'Cognitive Nexus';
 
 // Types
 // ----------------------------------------------------------------------
@@ -50,10 +41,12 @@ type Tool =
   | 'research'
   | 'pitch'
   | 'legal'
-  | 'calendar';
+  | 'calendar'
+  | 'crm'; // 🆕 NEW: CRM tool
 
 const navigation = [
   { id: 'dashboard' as Tool, name: 'Dashboard', icon: Home },
+  { id: 'crm' as Tool, name: 'CRM', icon: UserCheck }, // 🆕 NEW: CRM navigation
   { id: 'business-plan' as Tool, name: 'Business Plan', icon: FileBarChart },
   { id: 'financial' as Tool, name: 'Financial Tools', icon: Calculator },
   { id: 'documents' as Tool, name: 'Documents', icon: FileText },
@@ -75,7 +68,7 @@ const AppContent: React.FC = () => {
   if (authLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="aurora-card rounded-lg p-8 text-center">
+        <div className="glass-card rounded-lg p-8 text-center">
           <div
             className="animate-spin w-8 h-8 border-2 border-current border-t-transparent rounded-full mx-auto mb-4"
             style={{ borderColor: 'var(--aurora-glow-vibrant)' }}
@@ -95,7 +88,7 @@ const AppContent: React.FC = () => {
           <div className="fixed bottom-4 left-4">
             <button
               onClick={() => setShowAuth('login')}
-              className="aurora-button-secondary px-4 py-2 rounded-lg"
+              className="glass-button-secondary px-4 py-2 rounded-lg"
             >
               ← Back to Login
             </button>
@@ -109,7 +102,7 @@ const AppContent: React.FC = () => {
         <div className="fixed bottom-4 left-4">
           <button
             onClick={() => setShowAuth('register')}
-            className="aurora-button-secondary px-4 py-2 rounded-lg"
+            className="glass-button-secondary px-4 py-2 rounded-lg"
           >
             Create Account →
           </button>
@@ -123,9 +116,9 @@ const AppContent: React.FC = () => {
     return <ProfileSelection />;
   }
 
-  // 4. Navigation filtered by selected modules
+  // 4. Navigation filtered by selected modules (CRM always available)
   const filteredNavigation = navigation.filter(
-    (item) => item.id === 'dashboard' || selectedModules.includes(item.id)
+    (item) => item.id === 'dashboard' || item.id === 'crm' || selectedModules.includes(item.id)
   );
 
   // 5. Renders the current tool
@@ -133,6 +126,8 @@ const AppContent: React.FC = () => {
     switch (activeTool) {
       case 'dashboard':
         return <Dashboard onNavigate={setActiveTool} />;
+      case 'crm': // 🆕 NEW: CRM case
+        return <CRMDashboard />;
       case 'business-plan':
         return <BusinessPlanGenerator />;
       case 'financial':
@@ -147,28 +142,26 @@ const AppContent: React.FC = () => {
         return <PitchDeckBuilder />;
       case 'legal':
         return <LegalDocuments />;
-      // case 'calendar':
-      //   return <CalendarView />;
       default:
         return <Dashboard onNavigate={setActiveTool} />;
     }
   };
 
   // ----------------------------------------------------------------------
-  // OEM: Sidebar, branding, user menu and layout
+  // OEM: Sidebar, branding, user menu and layout with glass effects
   // ----------------------------------------------------------------------
 
   return (
     <div className="app-container flex">
-      {/* Sidebar */}
-      <div className="w-64 aurora-sidebar relative">
+      {/* 🆕 ENHANCED: Glass Sidebar */}
+      <div className="w-64 glass-sidebar relative">
         <div
           className="p-6 border-b"
           style={{ borderColor: 'var(--aurora-border-light)' }}
         >
           <div className="flex items-center space-x-3">
             <div
-              className="w-10 h-10 rounded-lg flex items-center justify-center aurora-icon-glow"
+              className="w-10 h-10 rounded-lg flex items-center justify-center glass-icon-glow"
               style={{
                 background:
                   'linear-gradient(135deg, var(--aurora-glow-vibrant), var(--aurora-glow-accent-green))',
@@ -181,10 +174,10 @@ const AppContent: React.FC = () => {
             </div>
             <div>
               <h1 className="text-xl font-bold aurora-gradient-text">
-                {getAppName()}
+                {APP_NAME}
               </h1>
               <p className="text-sm aurora-text-secondary">
-                {companyName || (getAppName() === APP_NAME.fr ? 'Boîte à outils d’affaires' : 'Business Toolkit')}
+                {companyName || 'Business Intelligence Platform'}
               </p>
             </div>
           </div>
@@ -197,7 +190,7 @@ const AppContent: React.FC = () => {
               <button
                 key={item.id}
                 onClick={() => setActiveTool(item.id)}
-                className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-300 aurora-nav-item ${
+                className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-300 glass-nav-item ${
                   activeTool === item.id ? 'active' : ''
                 }`}
               >
@@ -208,14 +201,14 @@ const AppContent: React.FC = () => {
           })}
         </nav>
 
-        {/* User menu */}
+        {/* 🆕 ENHANCED: Glass User menu */}
         <div
-          className="absolute bottom-0 left-0 right-0 p-4 border-t"
+          className="absolute bottom-0 left-0 right-0 p-4 border-t glass-user-menu"
           style={{ borderColor: 'var(--aurora-border-light)' }}
         >
           <div className="flex items-center space-x-3 mb-3">
             <div
-              className="w-8 h-8 rounded-full flex items-center justify-center"
+              className="w-8 h-8 rounded-full flex items-center justify-center glass-avatar"
               style={{ background: 'var(--aurora-glow-vibrant)' }}
             >
               <span
@@ -234,7 +227,7 @@ const AppContent: React.FC = () => {
           </div>
           <button
             onClick={signOut}
-            className="w-full aurora-button-secondary px-3 py-2 rounded-lg text-sm"
+            className="w-full glass-button-secondary px-3 py-2 rounded-lg text-sm"
           >
             Sign Out
           </button>
