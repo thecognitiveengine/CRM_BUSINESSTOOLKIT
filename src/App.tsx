@@ -1,4 +1,4 @@
-// OEM: App.tsx - Enhanced with CRM Integration
+// OEM: App.tsx - Enhanced with CRM Integration (Aurora Theme Preserved)
 // Version multi-langue, annotation complète, structure OEM respectée
 
 import React, { useState } from 'react';
@@ -27,7 +27,7 @@ import ProfileSelection from './components/ProfileSelection/ProfileSelection';
 import { UserProfileProvider, useUserProfile } from './contexts/UserProfileContext';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 
-// 🆕 CENTRAL BRANDING - Simplified without French
+// 🆕 FIXED: Simplified branding without French
 const APP_NAME = 'Cognitive Nexus';
 
 // Types
@@ -68,7 +68,7 @@ const AppContent: React.FC = () => {
   if (authLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="glass-card rounded-lg p-8 text-center">
+        <div className="aurora-card rounded-lg p-8 text-center">
           <div
             className="animate-spin w-8 h-8 border-2 border-current border-t-transparent rounded-full mx-auto mb-4"
             style={{ borderColor: 'var(--aurora-glow-vibrant)' }}
@@ -88,7 +88,7 @@ const AppContent: React.FC = () => {
           <div className="fixed bottom-4 left-4">
             <button
               onClick={() => setShowAuth('login')}
-              className="glass-button-secondary px-4 py-2 rounded-lg"
+              className="aurora-button-secondary px-4 py-2 rounded-lg"
             >
               ← Back to Login
             </button>
@@ -102,7 +102,7 @@ const AppContent: React.FC = () => {
         <div className="fixed bottom-4 left-4">
           <button
             onClick={() => setShowAuth('register')}
-            className="glass-button-secondary px-4 py-2 rounded-lg"
+            className="aurora-button-secondary px-4 py-2 rounded-lg"
           >
             Create Account →
           </button>
@@ -148,20 +148,20 @@ const AppContent: React.FC = () => {
   };
 
   // ----------------------------------------------------------------------
-  // OEM: Sidebar, branding, user menu and layout with glass effects
+  // OEM: Sidebar, branding, user menu and layout (AURORA THEME PRESERVED)
   // ----------------------------------------------------------------------
 
   return (
     <div className="app-container flex">
-      {/* 🆕 ENHANCED: Glass Sidebar */}
-      <div className="w-64 glass-sidebar relative">
+      {/* 🆕 PRESERVED: Aurora Sidebar */}
+      <div className="w-64 aurora-sidebar relative">
         <div
           className="p-6 border-b"
           style={{ borderColor: 'var(--aurora-border-light)' }}
         >
           <div className="flex items-center space-x-3">
             <div
-              className="w-10 h-10 rounded-lg flex items-center justify-center glass-icon-glow"
+              className="w-10 h-10 rounded-lg flex items-center justify-center aurora-icon-glow"
               style={{
                 background:
                   'linear-gradient(135deg, var(--aurora-glow-vibrant), var(--aurora-glow-accent-green))',
@@ -190,7 +190,7 @@ const AppContent: React.FC = () => {
               <button
                 key={item.id}
                 onClick={() => setActiveTool(item.id)}
-                className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-300 glass-nav-item ${
+                className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-300 aurora-nav-item ${
                   activeTool === item.id ? 'active' : ''
                 }`}
               >
@@ -201,14 +201,14 @@ const AppContent: React.FC = () => {
           })}
         </nav>
 
-        {/* 🆕 ENHANCED: Glass User menu */}
+        {/* 🆕 PRESERVED: Aurora User menu */}
         <div
-          className="absolute bottom-0 left-0 right-0 p-4 border-t glass-user-menu"
+          className="absolute bottom-0 left-0 right-0 p-4 border-t"
           style={{ borderColor: 'var(--aurora-border-light)' }}
         >
           <div className="flex items-center space-x-3 mb-3">
             <div
-              className="w-8 h-8 rounded-full flex items-center justify-center glass-avatar"
+              className="w-8 h-8 rounded-full flex items-center justify-center"
               style={{ background: 'var(--aurora-glow-vibrant)' }}
             >
               <span
@@ -227,7 +227,7 @@ const AppContent: React.FC = () => {
           </div>
           <button
             onClick={signOut}
-            className="w-full glass-button-secondary px-3 py-2 rounded-lg text-sm"
+            className="w-full aurora-button-secondary px-3 py-2 rounded-lg text-sm"
           >
             Sign Out
           </button>

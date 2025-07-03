@@ -15,14 +15,10 @@ const Login: React.FC = () => {
     e.preventDefault();
     setError(null);
     
-    console.log('Login attempt:', { email, hasPassword: !!password });
-    
     const { error } = await signIn(email, password);
     if (error) {
-      console.error('Login failed:', error);
       setError(error);
     } else {
-      console.log('Login successful, navigating to dashboard');
       navigate('/dashboard');
     }
   };
@@ -30,8 +26,8 @@ const Login: React.FC = () => {
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
       <div className="w-full max-w-md">
-        <div className="glass-card rounded-2xl p-8 backdrop-blur-xl border border-white/20 shadow-2xl">
-          {/* 🆕 ENHANCED: Centered title without French */}
+        <div className="aurora-card rounded-lg p-8">
+          {/* 🆕 FIXED: Centered title without French, keeping Aurora theme */}
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold aurora-gradient-text mb-2">
               Cognitive Nexus
@@ -41,14 +37,15 @@ const Login: React.FC = () => {
             </p>
           </div>
 
-          {/* 🆕 ENHANCED: Error Display with glass effect */}
+          {/* 🆕 FIXED: Error Display with Aurora theme */}
           {error && (
-            <div className="mb-6 glass-card-error rounded-lg p-4 backdrop-blur-sm border border-red-500/30">
+            <div className="mb-6 aurora-card rounded-lg p-4"
+                 style={{ background: 'rgba(220, 20, 60, 0.1)', border: '1px solid rgba(220, 20, 60, 0.3)' }}>
               <span className="aurora-text-primary text-sm">{error}</span>
             </div>
           )}
 
-          {/* 🆕 ENHANCED: Form with glass inputs */}
+          {/* 🆕 FIXED: Form with Aurora inputs */}
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label className="block text-sm font-medium aurora-text-primary mb-2">
@@ -58,7 +55,7 @@ const Login: React.FC = () => {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="glass-input w-full px-4 py-3 rounded-lg backdrop-blur-sm border border-white/20 bg-white/10"
+                className="w-full px-4 py-3 rounded-lg aurora-input"
                 placeholder="your@email.com"
                 required
               />
@@ -72,19 +69,25 @@ const Login: React.FC = () => {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="glass-input w-full px-4 py-3 rounded-lg backdrop-blur-sm border border-white/20 bg-white/10"
+                className="w-full px-4 py-3 rounded-lg aurora-input"
                 placeholder="********"
                 required
               />
             </div>
 
-            {/* 🆕 ENHANCED: Glass button with star border animation */}
+            {/* 🆕 ENHANCED: Aurora button with star border animation */}
             <button
               type="submit"
               disabled={loading}
-              className="glass-button-primary w-full py-3 px-4 rounded-lg font-medium transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden group"
+              className="w-full py-3 px-4 rounded-lg font-medium transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden group star-border-button"
+              style={{ 
+                background: loading 
+                  ? 'var(--aurora-section-bg)'
+                  : 'linear-gradient(135deg, var(--aurora-glow-vibrant), var(--aurora-glow-accent-green))',
+                color: loading ? 'var(--text-secondary)' : 'var(--aurora-bg-dark)',
+                boxShadow: loading ? 'none' : '0 4px 15px rgba(102, 204, 238, 0.3)'
+              }}
             >
-              <div className="star-border absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               <div className="relative z-10 flex items-center justify-center space-x-2">
                 <Sparkles className="w-4 h-4" />
                 <span>{loading ? 'Signing in...' : 'Sign In'}</span>
@@ -92,11 +95,11 @@ const Login: React.FC = () => {
             </button>
           </form>
 
-          {/* 🆕 ENHANCED: Register Link with glass effect */}
+          {/* 🆕 FIXED: Register Link with Aurora theme */}
           <div className="mt-6 text-center">
             <p className="text-sm aurora-text-secondary">
               No account?{' '}
-              <a href="/register" className="aurora-text-primary hover:underline glass-link">
+              <a href="/register" className="aurora-text-primary hover:underline">
                 Create one
               </a>
             </p>

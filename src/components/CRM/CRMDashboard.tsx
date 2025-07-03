@@ -121,11 +121,12 @@ const CRMDashboard: React.FC = () => {
   };
 
   const ContactCard: React.FC<{ contact: Contact }> = ({ contact }) => (
-    <div className="glass-card rounded-lg p-4 hover:glass-glow transition-all duration-300">
+    <div className="aurora-card rounded-lg p-4 aurora-glow-hover transition-all duration-300">
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 rounded-full glass-avatar flex items-center justify-center">
-            <span className="text-sm font-medium">
+          <div className="w-10 h-10 rounded-full flex items-center justify-center"
+               style={{ background: 'var(--aurora-glow-vibrant)' }}>
+            <span className="text-sm font-medium" style={{ color: 'var(--aurora-bg-dark)' }}>
               {contact.name.charAt(0).toUpperCase()}
             </span>
           </div>
@@ -136,7 +137,7 @@ const CRMDashboard: React.FC = () => {
         </div>
         <div className="flex items-center space-x-2">
           <span 
-            className="px-2 py-1 rounded-full text-xs font-medium glass-badge"
+            className="px-2 py-1 rounded-full text-xs font-medium aurora-status-badge"
             style={{ 
               backgroundColor: `${getStatusColor(contact.status)}20`,
               color: getStatusColor(contact.status),
@@ -145,7 +146,7 @@ const CRMDashboard: React.FC = () => {
           >
             {contact.status}
           </span>
-          <button className="glass-icon-button p-1 rounded hover:bg-white/10">
+          <button className="p-1 rounded aurora-button-secondary">
             <MoreHorizontal className="w-4 h-4" />
           </button>
         </div>
@@ -169,7 +170,7 @@ const CRMDashboard: React.FC = () => {
           {contact.tags.map((tag, index) => (
             <span
               key={index}
-              className="text-xs px-2 py-1 rounded-full glass-tag"
+              className="text-xs px-2 py-1 rounded-full aurora-nav-item"
             >
               {tag}
             </span>
@@ -182,8 +183,9 @@ const CRMDashboard: React.FC = () => {
   if (loading) {
     return (
       <div className="p-8 flex items-center justify-center">
-        <div className="glass-card rounded-lg p-8 text-center">
-          <div className="animate-spin w-8 h-8 border-2 border-current border-t-transparent rounded-full mx-auto mb-4"></div>
+        <div className="aurora-card rounded-lg p-8 text-center">
+          <div className="animate-spin w-8 h-8 border-2 border-current border-t-transparent rounded-full mx-auto mb-4"
+               style={{ borderColor: 'var(--aurora-glow-vibrant)' }}></div>
           <p className="aurora-text-secondary">Loading CRM data...</p>
         </div>
       </div>
@@ -198,58 +200,62 @@ const CRMDashboard: React.FC = () => {
         <p className="aurora-text-secondary">Manage your contacts, deals, and customer interactions</p>
       </div>
 
-      {/* 🆕 NEW: CRM Stats */}
+      {/* 🆕 NEW: CRM Stats with Aurora theme */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <div className="glass-card rounded-lg p-6">
+        <div className="aurora-card aurora-glow-hover rounded-lg p-6">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium aurora-text-secondary mb-1">Total Contacts</p>
               <p className="text-2xl font-bold aurora-text-primary">{stats.totalContacts}</p>
             </div>
-            <div className="glass-icon-container">
+            <div className="w-12 h-12 rounded-lg flex items-center justify-center aurora-icon-glow"
+                 style={{ backgroundColor: `var(--aurora-glow-vibrant)20`, border: `1px solid var(--aurora-glow-vibrant)40` }}>
               <Users className="w-6 h-6" style={{ color: 'var(--aurora-glow-vibrant)' }} />
             </div>
           </div>
         </div>
 
-        <div className="glass-card rounded-lg p-6">
+        <div className="aurora-card aurora-glow-hover rounded-lg p-6">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium aurora-text-secondary mb-1">Active Leads</p>
               <p className="text-2xl font-bold aurora-text-primary">{stats.leads}</p>
             </div>
-            <div className="glass-icon-container">
+            <div className="w-12 h-12 rounded-lg flex items-center justify-center aurora-icon-glow"
+                 style={{ backgroundColor: `var(--aurora-glow-accent-green)20`, border: `1px solid var(--aurora-glow-accent-green)40` }}>
               <TrendingUp className="w-6 h-6" style={{ color: 'var(--aurora-glow-accent-green)' }} />
             </div>
           </div>
         </div>
 
-        <div className="glass-card rounded-lg p-6">
+        <div className="aurora-card aurora-glow-hover rounded-lg p-6">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium aurora-text-secondary mb-1">Total Deals</p>
               <p className="text-2xl font-bold aurora-text-primary">{stats.totalDeals}</p>
             </div>
-            <div className="glass-icon-container">
+            <div className="w-12 h-12 rounded-lg flex items-center justify-center aurora-icon-glow"
+                 style={{ backgroundColor: `var(--aurora-glow-accent-purple)20`, border: `1px solid var(--aurora-glow-accent-purple)40` }}>
               <DollarSign className="w-6 h-6" style={{ color: 'var(--aurora-glow-accent-purple)' }} />
             </div>
           </div>
         </div>
 
-        <div className="glass-card rounded-lg p-6">
+        <div className="aurora-card aurora-glow-hover rounded-lg p-6">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium aurora-text-secondary mb-1">Deal Value</p>
               <p className="text-2xl font-bold aurora-text-primary">${stats.dealValue.toLocaleString()}</p>
             </div>
-            <div className="glass-icon-container">
+            <div className="w-12 h-12 rounded-lg flex items-center justify-center aurora-icon-glow"
+                 style={{ backgroundColor: `var(--status-planning-color-aurora)20`, border: `1px solid var(--status-planning-color-aurora)40` }}>
               <Calendar className="w-6 h-6" style={{ color: 'var(--status-planning-color-aurora)' }} />
             </div>
           </div>
         </div>
       </div>
 
-      {/* 🆕 NEW: CRM Navigation Tabs */}
+      {/* 🆕 NEW: CRM Navigation Tabs with Aurora theme */}
       <div className="mb-6">
         <div className="flex space-x-2">
           {[
@@ -264,8 +270,8 @@ const CRMDashboard: React.FC = () => {
                 onClick={() => setActiveTab(tab.id as any)}
                 className={`flex items-center space-x-2 px-4 py-2 rounded-lg font-medium transition-all duration-300 ${
                   activeTab === tab.id
-                    ? 'glass-button-active'
-                    : 'glass-button-secondary'
+                    ? 'aurora-button-primary'
+                    : 'aurora-button-secondary'
                 }`}
               >
                 <Icon className="w-4 h-4" />
@@ -276,8 +282,8 @@ const CRMDashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* 🆕 NEW: Search and Filter Bar */}
-      <div className="mb-6 glass-card rounded-lg p-4">
+      {/* 🆕 NEW: Search and Filter Bar with Aurora theme */}
+      <div className="mb-6 aurora-card rounded-lg p-4">
         <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-4 sm:space-y-0 sm:space-x-4">
           <div className="flex items-center space-x-2 flex-1">
             <Search className="w-4 h-4 aurora-text-secondary" />
@@ -286,7 +292,7 @@ const CRMDashboard: React.FC = () => {
               placeholder="Search contacts..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="glass-input flex-1 px-3 py-2 rounded-lg"
+              className="aurora-input flex-1 px-3 py-2 rounded-lg"
             />
           </div>
           
@@ -294,7 +300,7 @@ const CRMDashboard: React.FC = () => {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="glass-input px-3 py-2 rounded-lg"
+              className="aurora-input px-3 py-2 rounded-lg"
             >
               <option value="all">All Status</option>
               <option value="Lead">Leads</option>
@@ -302,7 +308,7 @@ const CRMDashboard: React.FC = () => {
               <option value="Past">Past</option>
             </select>
             
-            <button className="glass-button-primary flex items-center space-x-2 px-4 py-2 rounded-lg">
+            <button className="aurora-button-primary flex items-center space-x-2 px-4 py-2 rounded-lg">
               <Plus className="w-4 h-4" />
               <span>Add Contact</span>
             </button>
@@ -310,7 +316,7 @@ const CRMDashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* 🆕 NEW: CRM Content */}
+      {/* 🆕 NEW: CRM Content with Aurora theme */}
       <div className="space-y-6">
         {activeTab === 'contacts' && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -318,7 +324,7 @@ const CRMDashboard: React.FC = () => {
               <ContactCard key={contact.id} contact={contact} />
             ))}
             {filteredContacts.length === 0 && (
-              <div className="col-span-full glass-card rounded-lg p-8 text-center">
+              <div className="col-span-full aurora-card rounded-lg p-8 text-center">
                 <Users className="w-16 h-16 mx-auto mb-4 aurora-text-secondary" />
                 <h3 className="text-lg font-semibold aurora-text-primary mb-2">No contacts found</h3>
                 <p className="aurora-text-secondary">Start by adding your first contact</p>
@@ -328,7 +334,7 @@ const CRMDashboard: React.FC = () => {
         )}
 
         {activeTab === 'deals' && (
-          <div className="glass-card rounded-lg p-8 text-center">
+          <div className="aurora-card rounded-lg p-8 text-center">
             <DollarSign className="w-16 h-16 mx-auto mb-4 aurora-text-secondary" />
             <h3 className="text-lg font-semibold aurora-text-primary mb-2">Deals Management</h3>
             <p className="aurora-text-secondary">Track your sales pipeline and opportunities</p>
@@ -336,7 +342,7 @@ const CRMDashboard: React.FC = () => {
         )}
 
         {activeTab === 'activities' && (
-          <div className="glass-card rounded-lg p-8 text-center">
+          <div className="aurora-card rounded-lg p-8 text-center">
             <Calendar className="w-16 h-16 mx-auto mb-4 aurora-text-secondary" />
             <h3 className="text-lg font-semibold aurora-text-primary mb-2">Activity Timeline</h3>
             <p className="aurora-text-secondary">View all customer interactions and activities</p>
