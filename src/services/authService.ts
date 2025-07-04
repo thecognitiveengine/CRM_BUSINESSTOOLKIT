@@ -119,13 +119,18 @@ class AuthService {
     }
   }
 
-  // 🆕 FIXED: Get current user
+  // 🆕 FIXED: Get current user with proper session handling
   async getCurrentUser(): Promise<AuthUser | null> {
     try {
       const { data: { user }, error } = await supabase.auth.getUser();
       
       if (error) {
-        console.error('Get user error:', error);
+        // Handle "Auth session missing!" as expected state, not an error
+        if (error.message === 'Auth session missing!') {
+          console.log('No active session - user not authenticated');
+        } else {
+          console.error('Get user error:', error);
+        }
         return null;
       }
       
@@ -142,13 +147,18 @@ class AuthService {
     }
   }
 
-  // 🆕 FIXED: Get current session
+  // 🆕 FIXED: Get current session with proper session handling
   async getCurrentSession(): Promise<Session | null> {
     try {
       const { data: { session }, error } = await supabase.auth.getSession();
       
       if (error) {
-        console.error('Get session error:', error);
+        // Handle "Auth session missing!" as expected state, not an error
+        if (error.message === 'Auth session missing!') {
+          console.log('No active session available');
+        } else {
+          console.error('Get session error:', error);
+        }
         return null;
       }
       
@@ -220,8 +230,14 @@ class AuthService {
     try {
       const { data, error } = await supabase.auth.getSession();
       if (error) {
-        console.error('Connection test failed:', error);
-        return false;
+        // Handle "Auth session missing!" as expected state for connection test
+        if (error.message === 'Auth session missing!') {
+          console.log('Connection test successful - no active session');
+          return true;
+        } else {
+          console.error('Connection test failed:', error);
+          return false;
+        }
       }
       console.log('Connection test successful');
       return true;
