@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import { Sparkles, AlertCircle, Mail } from 'lucide-react';
+import { authService } from '../../services/authService';
+import { Sparkles, AlertCircle, Mail, Bug } from 'lucide-react';
 
 const Login: React.FC = () => {
   const { signIn, loading } = useAuth();
@@ -10,30 +11,70 @@ const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [showDebug, setShowDebug] = useState(false);
+
+  // Debug environment on mount in development
+  useEffect(() => {
+    if (import.meta.env.DEV) {
+      authService.debugEnvironment();
+    }
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     
+    console.log('🔐 Login attempt for:', email);
+    
     const { error } = await signIn(email, password);
     if (error) {
       setError(error);
+      console.error('❌ Login failed:', error);
     } else {
+      console.log('✅ Login successful, navigating to dashboard');
       navigate('/dashboard');
     }
   };
 
+  const handleDebugTest = async () => {
+    console.log('🧪 Running debug test...');
+    await authService.debugEnvironment();
+    const connectionTest = await authService.testConnection();
+    console.log('Connection test result:', connectionTest);
+  };
+
   const getErrorMessage = (error: string) => {
-    if (error.includes('Invalid login credentials')) {
+    if (error.includes('Invalid login credentials') || error.includes('Authentication failed')) {
       return (
-        <div className="space-y-2">
+        <div className="space-y-3">
           <div className="flex items-center space-x-2">
             <AlertCircle className="w-4 h-4 text-red-400" />
-            <span className="font-medium">Invalid credentials</span>
+            <span className="font-medium">Authentication Failed</span>
           </div>
-          <p className="text-sm">
-            The email or password you entered is incorrect. Please check your credentials and try again.
-          </p>
+          
+          {error.includes('Project URL') ? (
+            <div className="text-sm space-y-2">
+              <p>There appears to be a configuration issue with the Supabase connection.</p>
+              <div className="p-3 rounded bg-yellow-500/10 border border-yellow-500/20">
+                <p className="text-yellow-300 font-medium mb-1">Debug Information:</p>
+                <pre className="text-xs text-yellow-200 whitespace-pre-wrap">{error}</pre>
+              </div>
+              <p>Please check your environment variables and try again.</p>
+            </div>
+          ) : (
+            <div className="text-sm space-y-2">
+              <p>The email or password you entered is incorrect.</p>
+              <div className="p-3 rounded bg-blue-500/10 border border-blue-500/20">
+                <p className="text-blue-300 font-medium mb-1">Troubleshooting:</p>
+                <ul className="text-blue-200 text-xs space-y-1">
+                  <li>• Double-check your email and password</li>
+                  <li>• Make sure your account is confirmed</li>
+                  <li>• Try clearing your browser cache</li>
+                </ul>
+              </div>
+            </div>
+          )}
+          
           <div className="mt-3 p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
             <div className="flex items-start space-x-2">
               <Mail className="w-4 h-4 text-blue-400 mt-0.5" />
@@ -82,6 +123,35 @@ const Login: React.FC = () => {
               Access your business intelligence dashboard
             </p>
           </div>
+
+          {/* Debug Panel for Development */}
+          {import.meta.env.DEV && (
+            <div className="mb-6">
+              <button
+                onClick={() => setShowDebug(!showDebug)}
+                className="flex items-center space-x-2 text-xs aurora-text-secondary hover:aurora-text-primary"
+              >
+                <Bug className="w-3 h-3" />
+                <span>Debug Info</span>
+              </button>
+              
+              {showDebug && (
+                <div className="mt-2 p-3 rounded bg-gray-800/50 border border-gray-600">
+                  <div className="text-xs space-y-1">
+                    <p><strong>Supabase URL:</strong> {import.meta.env.VITE_SUPABASE_URL}</p>
+                    <p><strong>Has Anon Key:</strong> {!!import.meta.env.VITE_SUPABASE_ANON_KEY}</p>
+                    <p><strong>Key Length:</strong> {import.meta.env.VITE_SUPABASE_ANON_KEY?.length}</p>
+                  </div>
+                  <button
+                    onClick={handleDebugTest}
+                    className="mt-2 text-xs px-2 py-1 bg-blue-600 rounded hover:bg-blue-700"
+                  >
+                    Test Connection
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Enhanced Error Display */}
           {error && (
