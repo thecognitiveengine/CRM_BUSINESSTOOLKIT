@@ -1,7 +1,6 @@
 import { supabase } from '../utils/supabaseClient';
 import type { User, Session } from '@supabase/supabase-js';
 
-// 🆕 FIXED: Complete authentication service with better error handling
 export interface AuthUser {
   id: string;
   email: string;
@@ -15,7 +14,7 @@ export interface AuthResponse {
 }
 
 class AuthService {
-  // 🆕 FIXED: Sign up with email and password
+  // Enhanced sign up with better error handling
   async signUp(email: string, password: string, metadata?: any): Promise<AuthResponse> {
     try {
       console.log('Attempting sign up for:', email);
@@ -31,7 +30,18 @@ class AuthService {
 
       if (error) {
         console.error('Sign up error:', error);
-        return { user: null, session: null, error: error.message };
+        
+        // Provide more helpful error messages
+        let errorMessage = error.message;
+        if (error.message.includes('User already registered')) {
+          errorMessage = 'An account with this email already exists. Please sign in instead or use a different email address.';
+        } else if (error.message.includes('Password should be at least')) {
+          errorMessage = 'Password must be at least 6 characters long.';
+        } else if (error.message.includes('Invalid email')) {
+          errorMessage = 'Please enter a valid email address.';
+        }
+        
+        return { user: null, session: null, error: errorMessage };
       }
 
       console.log('Sign up successful:', !!data.user);
@@ -49,12 +59,12 @@ class AuthService {
       return { 
         user: null, 
         session: null, 
-        error: error instanceof Error ? error.message : 'Unknown error' 
+        error: error instanceof Error ? error.message : 'An unexpected error occurred during sign up' 
       };
     }
   }
 
-  // 🆕 FIXED: Sign in with email and password
+  // Enhanced sign in with better error handling
   async signIn(email: string, password: string): Promise<AuthResponse> {
     try {
       console.log('Attempting sign in for:', email);
@@ -70,9 +80,13 @@ class AuthService {
         // Provide more helpful error messages
         let errorMessage = error.message;
         if (error.message.includes('Invalid login credentials')) {
-          errorMessage = 'Invalid email or password. Please check your credentials and try again.';
+          errorMessage = 'Invalid email or password. Please check your credentials and try again. If you don\'t have an account, please register first.';
         } else if (error.message.includes('Email not confirmed')) {
-          errorMessage = 'Please check your email and click the confirmation link before signing in.';
+          errorMessage = 'Please check your email and click the confirmation link before signing in. Check your spam folder if you don\'t see the email.';
+        } else if (error.message.includes('Too many requests')) {
+          errorMessage = 'Too many sign-in attempts. Please wait a few minutes before trying again.';
+        } else if (error.message.includes('Invalid email')) {
+          errorMessage = 'Please enter a valid email address.';
         }
         
         return { user: null, session: null, error: errorMessage };
@@ -93,12 +107,12 @@ class AuthService {
       return { 
         user: null, 
         session: null, 
-        error: error instanceof Error ? error.message : 'Unknown error' 
+        error: error instanceof Error ? error.message : 'An unexpected error occurred during sign in' 
       };
     }
   }
 
-  // 🆕 FIXED: Sign out
+  // Sign out
   async signOut(): Promise<{ error?: string }> {
     try {
       console.log('Attempting sign out');
@@ -114,12 +128,12 @@ class AuthService {
     } catch (error) {
       console.error('Sign out exception:', error);
       return { 
-        error: error instanceof Error ? error.message : 'Unknown error' 
+        error: error instanceof Error ? error.message : 'An unexpected error occurred during sign out' 
       };
     }
   }
 
-  // 🆕 FIXED: Get current user with proper session handling
+  // Get current user with proper session handling
   async getCurrentUser(): Promise<AuthUser | null> {
     try {
       const { data: { user }, error } = await supabase.auth.getUser();
@@ -147,7 +161,7 @@ class AuthService {
     }
   }
 
-  // 🆕 FIXED: Get current session with proper session handling
+  // Get current session with proper session handling
   async getCurrentSession(): Promise<Session | null> {
     try {
       const { data: { session }, error } = await supabase.auth.getSession();
@@ -169,7 +183,7 @@ class AuthService {
     }
   }
 
-  // 🆕 FIXED: Listen to auth state changes
+  // Listen to auth state changes
   onAuthStateChange(callback: (event: string, session: Session | null) => void) {
     return supabase.auth.onAuthStateChange((event, session) => {
       console.log('Auth state change:', event, !!session);
@@ -177,7 +191,7 @@ class AuthService {
     });
   }
 
-  // 🆕 FIXED: Reset password
+  // Reset password
   async resetPassword(email: string): Promise<{ error?: string }> {
     try {
       console.log('Attempting password reset for:', email);
@@ -196,12 +210,12 @@ class AuthService {
     } catch (error) {
       console.error('Password reset exception:', error);
       return { 
-        error: error instanceof Error ? error.message : 'Unknown error' 
+        error: error instanceof Error ? error.message : 'An unexpected error occurred during password reset' 
       };
     }
   }
 
-  // 🆕 FIXED: Update password
+  // Update password
   async updatePassword(newPassword: string): Promise<{ error?: string }> {
     try {
       console.log('Attempting password update');
@@ -220,12 +234,12 @@ class AuthService {
     } catch (error) {
       console.error('Password update exception:', error);
       return { 
-        error: error instanceof Error ? error.message : 'Unknown error' 
+        error: error instanceof Error ? error.message : 'An unexpected error occurred during password update' 
       };
     }
   }
 
-  // 🆕 NEW: Test connection method for development
+  // Test connection method for development
   async testConnection(): Promise<boolean> {
     try {
       const { data, error } = await supabase.auth.getSession();
