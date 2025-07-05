@@ -1,21 +1,20 @@
-// ✅ Ton AuthContext.tsx final multi-tenant
-
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { authService, type AuthUser } from '../services/authService';
-import type { Session } from '@supabase/supabase-js';
-import { useProfile } from '../hooks/useProfile';
+import { supabase } from '../utils/supabaseClient';
+import type { User, Session } from '@supabase/supabase-js';
+
+interface AuthUser {
+  id: string;
+  email: string;
+  user_metadata?: any;
+}
 
 interface AuthContextType {
   user: AuthUser | null;
   session: Session | null;
-  profile: any;
-  role: string | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<{ error?: string }>;
   signUp: (email: string, password: string, metadata?: any) => Promise<{ error?: string }>;
   signOut: () => Promise<{ error?: string }>;
-  resetPassword: (email: string) => Promise<{ error?: string }>;
-  updatePassword: (newPassword: string) => Promise<{ error?: string }>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -25,83 +24,91 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const { profile, loading: profileLoading } = useProfile(user?.id || null);
-
-  const role = user?.user_metadata?.role || profile?.role || 'member';
-
   useEffect(() => {
-    const initializeAuth = async () => {
-      try {
-        const currentSession = await authService.getCurrentSession();
-        const currentUser = await authService.getCurrentUser();
-        setSession(currentSession);
-        setUser(currentUser);
-      } catch (error) {
-        console.error('Error initializing auth:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
+    // Get initial session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setUser(session?.user ? {
+        id: session.user.id,
+        email: session.user.email!,
+        user_metadata: session.user.user_metadata
+      } : null);
+      setLoading(false);
+    });
 
-    initializeAuth();
-
-    const { data: { subscription } } = authService.onAuthStateChange(
-      async (_event, session) => {
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
         setSession(session);
-        if (session?.user) {
-          setUser({
-            id: session.user.id,
-            email: session.user.email!,
-            user_metadata: session.user.user_metadata
-          });
-        } else {
-          setUser(null);
-        }
+        setUser(session?.user ? {
+          id: session.user.id,
+          email: session.user.email!,
+          user_metadata: session.user.user_metadata
+        } : null);
         setLoading(false);
       }
     );
 
-    return () => {
-      subscription.unsubscribe();
-    };
+    return () => subscription.unsubscribe();
   }, []);
 
   const signIn = async (email: string, password: string) => {
-    setLoading(true);
-    const result = await authService.signIn(email, password);
-    setLoading(false);
-    return result.error ? { error: result.error } : {};
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
+      
+      if (error) {
+        return { error: error.message };
+      }
+      
+      return {};
+    } catch (error) {
+      return { error: 'An unexpected error occurred' };
+    }
   };
 
   const signUp = async (email: string, password: string, metadata?: any) => {
-    setLoading(true);
-    const result = await authService.signUp(email, password, metadata);
-    setLoading(false);
-    return result.error ? { error: result.error } : {};
+    try {
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: metadata
+        }
+      });
+      
+      if (error) {
+        return { error: error.message };
+      }
+      
+      return {};
+    } catch (error) {
+      return { error: 'An unexpected error occurred' };
+    }
   };
 
   const signOut = async () => {
-    setLoading(true);
-    const result = await authService.signOut();
-    setLoading(false);
-    return result.error ? { error: result.error } : {};
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        return { error: error.message };
+      }
+      return {};
+    } catch (error) {
+      return { error: 'An unexpected error occurred' };
+    }
   };
-
-  const resetPassword = async (email: string) => authService.resetPassword(email);
-  const updatePassword = async (newPassword: string) => authService.updatePassword(newPassword);
 
   return (
     <AuthContext.Provider value={{
       user,
       session,
-      profile,
-      role,
-      loading: loading || profileLoading,
+      loading,
       signIn,
       signUp,
-      signOut,
-      resetPassword,
-      updatePassword
+      signOut
     }}>
       {children}
     </AuthContext.Provider>
@@ -110,8 +117,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (!context) throw new Error('useAuth must be used within an AuthProvider');
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
   return context;
 };
-
-export default AuthContext;

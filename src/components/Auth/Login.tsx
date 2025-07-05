@@ -1,242 +1,114 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import React, { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
-import { authService } from '../../services/authService';
-import { Sparkles, AlertCircle, Mail, Bug } from 'lucide-react';
+import { Briefcase, Mail, Lock, Eye, EyeOff, AlertCircle } from 'lucide-react';
 
 const Login: React.FC = () => {
   const { signIn, loading } = useAuth();
-  const navigate = useNavigate();
-
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [showDebug, setShowDebug] = useState(false);
-
-  // Debug environment on mount in development
-  useEffect(() => {
-    if (import.meta.env.DEV) {
-      authService.debugEnvironment();
-    }
-  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     
-    console.log('🔐 Login attempt for:', email);
-    
-    const { error } = await signIn(email, password);
-    if (error) {
-      setError(error);
-      console.error('❌ Login failed:', error);
-    } else {
-      console.log('✅ Login successful, navigating to dashboard');
-      navigate('/dashboard');
+    const result = await signIn(email, password);
+    if (result.error) {
+      setError(result.error);
     }
-  };
-
-  const handleDebugTest = async () => {
-    console.log('🧪 Running debug test...');
-    await authService.debugEnvironment();
-    const connectionTest = await authService.testConnection();
-    console.log('Connection test result:', connectionTest);
-  };
-
-  const getErrorMessage = (error: string) => {
-    if (error.includes('Invalid login credentials') || error.includes('Authentication failed')) {
-      return (
-        <div className="space-y-3">
-          <div className="flex items-center space-x-2">
-            <AlertCircle className="w-4 h-4 text-red-400" />
-            <span className="font-medium">Authentication Failed</span>
-          </div>
-          
-          {error.includes('Project URL') ? (
-            <div className="text-sm space-y-2">
-              <p>There appears to be a configuration issue with the Supabase connection.</p>
-              <div className="p-3 rounded bg-yellow-500/10 border border-yellow-500/20">
-                <p className="text-yellow-300 font-medium mb-1">Debug Information:</p>
-                <pre className="text-xs text-yellow-200 whitespace-pre-wrap">{error}</pre>
-              </div>
-              <p>Please check your environment variables and try again.</p>
-            </div>
-          ) : (
-            <div className="text-sm space-y-2">
-              <p>The email or password you entered is incorrect.</p>
-              <div className="p-3 rounded bg-blue-500/10 border border-blue-500/20">
-                <p className="text-blue-300 font-medium mb-1">Troubleshooting:</p>
-                <ul className="text-blue-200 text-xs space-y-1">
-                  <li>• Double-check your email and password</li>
-                  <li>• Make sure your account is confirmed</li>
-                  <li>• Try clearing your browser cache</li>
-                </ul>
-              </div>
-            </div>
-          )}
-          
-          <div className="mt-3 p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
-            <div className="flex items-start space-x-2">
-              <Mail className="w-4 h-4 text-blue-400 mt-0.5" />
-              <div className="text-sm">
-                <p className="font-medium text-blue-300 mb-1">Don't have an account?</p>
-                <Link 
-                  to="/register" 
-                  className="text-blue-400 hover:text-blue-300 underline"
-                >
-                  Create a new account here
-                </Link>
-              </div>
-            </div>
-          </div>
-        </div>
-      );
-    }
-    
-    if (error.includes('Email not confirmed')) {
-      return (
-        <div className="space-y-2">
-          <div className="flex items-center space-x-2">
-            <Mail className="w-4 h-4 text-yellow-400" />
-            <span className="font-medium">Email not confirmed</span>
-          </div>
-          <p className="text-sm">
-            Please check your email and click the confirmation link before signing in.
-          </p>
-        </div>
-      );
-    }
-    
-    return error;
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-gray-900">
       <div className="w-full max-w-md">
-        <div className="aurora-card rounded-lg p-8">
-          {/* Header */}
+        <div className="bg-gray-800 rounded-lg p-8 border border-gray-700">
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold aurora-gradient-text mb-2">
-              Cognitive Nexus
-            </h1>
-            <p className="aurora-text-secondary text-sm">
-              Access your business intelligence dashboard
-            </p>
+            <div className="flex items-center justify-center space-x-3 mb-4">
+              <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-blue-600">
+                <Briefcase className="w-7 h-7 text-white" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold text-white">Business CRM</h1>
+                <p className="text-gray-400 text-sm">Sign in to your account</p>
+              </div>
+            </div>
           </div>
 
-          {/* Debug Panel for Development */}
-          {import.meta.env.DEV && (
-            <div className="mb-6">
-              <button
-                onClick={() => setShowDebug(!showDebug)}
-                className="flex items-center space-x-2 text-xs aurora-text-secondary hover:aurora-text-primary"
-              >
-                <Bug className="w-3 h-3" />
-                <span>Debug Info</span>
-              </button>
-              
-              {showDebug && (
-                <div className="mt-2 p-3 rounded bg-gray-800/50 border border-gray-600">
-                  <div className="text-xs space-y-1">
-                    <p><strong>Supabase URL:</strong> {import.meta.env.VITE_SUPABASE_URL}</p>
-                    <p><strong>Has Anon Key:</strong> {!!import.meta.env.VITE_SUPABASE_ANON_KEY}</p>
-                    <p><strong>Key Length:</strong> {import.meta.env.VITE_SUPABASE_ANON_KEY?.length}</p>
-                  </div>
-                  <button
-                    onClick={handleDebugTest}
-                    className="mt-2 text-xs px-2 py-1 bg-blue-600 rounded hover:bg-blue-700"
-                  >
-                    Test Connection
-                  </button>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Enhanced Error Display */}
           {error && (
-            <div className="mb-6 aurora-card rounded-lg p-4"
-                 style={{ background: 'rgba(220, 20, 60, 0.1)', border: '1px solid rgba(220, 20, 60, 0.3)' }}>
-              <div className="aurora-text-primary text-sm">
-                {getErrorMessage(error)}
+            <div className="mb-6 bg-red-900 bg-opacity-20 border border-red-500 rounded-lg p-4">
+              <div className="flex items-center space-x-2">
+                <AlertCircle className="w-5 h-5 text-red-400" />
+                <span className="text-red-400 text-sm">{error}</span>
               </div>
             </div>
           )}
 
-          {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label className="block text-sm font-medium aurora-text-primary mb-2">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
                 Email Address
               </label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 rounded-lg aurora-input"
-                placeholder="your@email.com"
-                required
-              />
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Mail className="w-5 h-5 text-gray-400" />
+                </div>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full pl-10 pr-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-blue-500 focus:outline-none"
+                  placeholder="your@email.com"
+                  required
+                />
+              </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium aurora-text-primary mb-2">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
                 Password
               </label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 rounded-lg aurora-input"
-                placeholder="********"
-                required
-              />
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Lock className="w-5 h-5 text-gray-400" />
+                </div>
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full pl-10 pr-12 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-blue-500 focus:outline-none"
+                  placeholder="********"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                >
+                  {showPassword ? (
+                    <EyeOff className="w-5 h-5 text-gray-400 hover:text-white" />
+                  ) : (
+                    <Eye className="w-5 h-5 text-gray-400 hover:text-white" />
+                  )}
+                </button>
+              </div>
             </div>
 
-            {/* Sign In Button */}
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 px-4 rounded-lg font-medium transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden group star-border-button"
-              style={{ 
-                background: loading 
-                  ? 'var(--aurora-section-bg)'
-                  : 'linear-gradient(135deg, var(--aurora-glow-vibrant), var(--aurora-glow-accent-green))',
-                color: loading ? 'var(--text-secondary)' : 'var(--aurora-bg-dark)',
-                boxShadow: loading ? 'none' : '0 4px 15px rgba(102, 204, 238, 0.3)'
-              }}
+              className="w-full py-3 px-4 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <div className="relative z-10 flex items-center justify-center space-x-2">
-                <Sparkles className="w-4 h-4" />
-                <span>{loading ? 'Signing in...' : 'Sign In'}</span>
-              </div>
+              {loading ? 'Signing in...' : 'Sign In'}
             </button>
           </form>
 
-          {/* Enhanced Register Link */}
           <div className="mt-6 text-center">
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-600"></div>
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-2 aurora-text-secondary" style={{ background: 'var(--aurora-section-bg)' }}>
-                  or
-                </span>
-              </div>
-            </div>
-            
-            <div className="mt-4">
-              <Link 
-                to="/register"
-                className="inline-flex items-center justify-center w-full py-2 px-4 rounded-lg border border-gray-600 aurora-text-primary hover:border-gray-500 transition-colors duration-200"
-              >
-                <span className="text-sm">Create a new account</span>
-              </Link>
-            </div>
-            
-            <p className="text-xs aurora-text-secondary mt-3">
-              New to Cognitive Nexus? Sign up to get started with your business intelligence dashboard.
+            <p className="text-sm text-gray-400">
+              Don't have an account?{' '}
+              <a href="/register" className="text-blue-400 hover:underline">
+                Create one here
+              </a>
             </p>
           </div>
         </div>
