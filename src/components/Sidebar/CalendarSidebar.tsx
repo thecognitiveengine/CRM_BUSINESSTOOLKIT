@@ -90,11 +90,11 @@ const CalendarSidebar: React.FC<CalendarSidebarProps> = ({ onEventClick, onDateS
 
   const getEventTypeColor = (type: string) => {
     switch (type) {
-      case 'meeting': return 'bg-blue-500';
-      case 'call': return 'bg-green-500';
-      case 'deadline': return 'bg-red-500';
-      case 'reminder': return 'bg-yellow-500';
-      default: return 'bg-gray-500';
+      case 'meeting': return 'var(--aurora-glow-vibrant)';
+      case 'call': return 'var(--aurora-glow-accent-green)';
+      case 'deadline': return 'var(--status-high-color-aurora)';
+      case 'reminder': return 'var(--status-planning-color-aurora)';
+      default: return 'var(--aurora-glow-accent-purple)';
     }
   };
 
@@ -109,39 +109,39 @@ const CalendarSidebar: React.FC<CalendarSidebarProps> = ({ onEventClick, onDateS
   const selectedDateEvents = selectedDate ? getEventsForDate(selectedDate) : [];
 
   return (
-    <div className="w-80 bg-gray-800 border-l border-gray-700 p-4 overflow-y-auto">
+    <div className="w-80 aurora-sidebar border-l p-4 overflow-y-auto" style={{ borderColor: 'var(--aurora-border-light)' }}>
       {/* Calendar Header */}
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold text-white">Calendar</h2>
-        <button className="p-1 text-gray-400 hover:text-white">
+        <h2 className="text-lg font-semibold aurora-text-primary">Calendar</h2>
+        <button className="p-1 aurora-text-secondary hover:aurora-text-primary">
           <Plus className="w-4 h-4" />
         </button>
       </div>
 
       {/* Mini Calendar */}
-      <div className="bg-gray-900 rounded-lg p-4 mb-6 border border-gray-700">
+      <div className="aurora-card rounded-lg p-4 mb-6">
         <div className="flex items-center justify-between mb-3">
           <button
             onClick={() => navigateMonth('prev')}
-            className="p-1 hover:bg-gray-800 rounded"
+            className="p-1 hover:aurora-button-secondary rounded"
           >
-            <ChevronLeft className="w-4 h-4 text-gray-400" />
+            <ChevronLeft className="w-4 h-4 aurora-text-secondary" />
           </button>
-          <h3 className="text-sm font-medium text-white">
+          <h3 className="text-sm font-medium aurora-text-primary">
             {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
           </h3>
           <button
             onClick={() => navigateMonth('next')}
-            className="p-1 hover:bg-gray-800 rounded"
+            className="p-1 hover:aurora-button-secondary rounded"
           >
-            <ChevronRight className="w-4 h-4 text-gray-400" />
+            <ChevronRight className="w-4 h-4 aurora-text-secondary" />
           </button>
         </div>
 
         {/* Day headers */}
         <div className="grid grid-cols-7 gap-1 mb-2">
           {dayNames.map(day => (
-            <div key={day} className="text-center text-xs text-gray-400 p-1">
+            <div key={day} className="text-center text-xs aurora-text-secondary p-1">
               {day}
             </div>
           ))}
@@ -162,14 +162,15 @@ const CalendarSidebar: React.FC<CalendarSidebarProps> = ({ onEventClick, onDateS
               <button
                 key={index}
                 onClick={() => handleDateClick(day)}
-                className={`p-1 h-8 text-xs rounded hover:bg-gray-700 transition-colors relative ${
-                  isToday ? 'bg-blue-600 text-white' : 
-                  isSelected ? 'bg-gray-600 text-white' : 'text-gray-300'
+                className={`p-1 h-8 text-xs rounded hover:aurora-button-secondary transition-colors relative ${
+                  isToday ? 'aurora-button-primary' : 
+                  isSelected ? 'aurora-button-secondary' : 'aurora-text-primary'
                 }`}
               >
                 {day.getDate()}
                 {dayEvents.length > 0 && (
-                  <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-blue-400 rounded-full"></div>
+                  <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-1 h-1 rounded-full"
+                       style={{ backgroundColor: 'var(--aurora-glow-vibrant)' }}></div>
                 )}
               </button>
             );
@@ -179,29 +180,30 @@ const CalendarSidebar: React.FC<CalendarSidebarProps> = ({ onEventClick, onDateS
 
       {/* Today's Events */}
       <div className="mb-6">
-        <h3 className="text-sm font-medium text-white mb-3">Today's Events</h3>
+        <h3 className="text-sm font-medium aurora-text-primary mb-3">Today's Events</h3>
         {todayEvents.length === 0 ? (
-          <p className="text-xs text-gray-400">No events today</p>
+          <p className="text-xs aurora-text-secondary">No events today</p>
         ) : (
           <div className="space-y-2">
             {todayEvents.map(event => (
               <div
                 key={event.id}
                 onClick={() => onEventClick?.(event)}
-                className="p-2 bg-gray-900 rounded border border-gray-700 hover:border-gray-600 cursor-pointer transition-colors"
+                className="p-2 aurora-card rounded aurora-glow-hover cursor-pointer transition-all duration-300"
               >
                 <div className="flex items-start space-x-2">
-                  <div className={`w-2 h-2 rounded-full mt-1.5 ${getEventTypeColor(event.event_type)}`}></div>
+                  <div className="w-2 h-2 rounded-full mt-1.5"
+                       style={{ backgroundColor: getEventTypeColor(event.event_type) }}></div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs font-medium text-white truncate">{event.title}</p>
-                    <div className="flex items-center space-x-2 text-xs text-gray-400 mt-1">
+                    <p className="text-xs font-medium aurora-text-primary truncate">{event.title}</p>
+                    <div className="flex items-center space-x-2 text-xs aurora-text-secondary mt-1">
                       <Clock className="w-3 h-3" />
                       <span>
                         {event.all_day ? 'All day' : formatTime(event.start_date)}
                       </span>
                     </div>
                     {event.location && (
-                      <div className="flex items-center space-x-2 text-xs text-gray-400 mt-1">
+                      <div className="flex items-center space-x-2 text-xs aurora-text-secondary mt-1">
                         <MapPin className="w-3 h-3" />
                         <span className="truncate">{event.location}</span>
                       </div>
@@ -217,31 +219,32 @@ const CalendarSidebar: React.FC<CalendarSidebarProps> = ({ onEventClick, onDateS
       {/* Selected Date Events */}
       {selectedDate && selectedDate.toDateString() !== new Date().toDateString() && (
         <div>
-          <h3 className="text-sm font-medium text-white mb-3">
+          <h3 className="text-sm font-medium aurora-text-primary mb-3">
             {selectedDate.toLocaleDateString()} Events
           </h3>
           {selectedDateEvents.length === 0 ? (
-            <p className="text-xs text-gray-400">No events on this date</p>
+            <p className="text-xs aurora-text-secondary">No events on this date</p>
           ) : (
             <div className="space-y-2">
               {selectedDateEvents.map(event => (
                 <div
                   key={event.id}
                   onClick={() => onEventClick?.(event)}
-                  className="p-2 bg-gray-900 rounded border border-gray-700 hover:border-gray-600 cursor-pointer transition-colors"
+                  className="p-2 aurora-card rounded aurora-glow-hover cursor-pointer transition-all duration-300"
                 >
                   <div className="flex items-start space-x-2">
-                    <div className={`w-2 h-2 rounded-full mt-1.5 ${getEventTypeColor(event.event_type)}`}></div>
+                    <div className="w-2 h-2 rounded-full mt-1.5"
+                         style={{ backgroundColor: getEventTypeColor(event.event_type) }}></div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-xs font-medium text-white truncate">{event.title}</p>
-                      <div className="flex items-center space-x-2 text-xs text-gray-400 mt-1">
+                      <p className="text-xs font-medium aurora-text-primary truncate">{event.title}</p>
+                      <div className="flex items-center space-x-2 text-xs aurora-text-secondary mt-1">
                         <Clock className="w-3 h-3" />
                         <span>
                           {event.all_day ? 'All day' : formatTime(event.start_date)}
                         </span>
                       </div>
                       {event.location && (
-                        <div className="flex items-center space-x-2 text-xs text-gray-400 mt-1">
+                        <div className="flex items-center space-x-2 text-xs aurora-text-secondary mt-1">
                           <MapPin className="w-3 h-3" />
                           <span className="truncate">{event.location}</span>
                         </div>
@@ -257,7 +260,7 @@ const CalendarSidebar: React.FC<CalendarSidebarProps> = ({ onEventClick, onDateS
 
       {/* Upcoming Events */}
       <div className="mt-6">
-        <h3 className="text-sm font-medium text-white mb-3">Upcoming Events</h3>
+        <h3 className="text-sm font-medium aurora-text-primary mb-3">Upcoming Events</h3>
         {(() => {
           const upcomingEvents = events
             .filter(event => new Date(event.start_date) > new Date())
@@ -265,23 +268,24 @@ const CalendarSidebar: React.FC<CalendarSidebarProps> = ({ onEventClick, onDateS
             .slice(0, 5);
 
           return upcomingEvents.length === 0 ? (
-            <p className="text-xs text-gray-400">No upcoming events</p>
+            <p className="text-xs aurora-text-secondary">No upcoming events</p>
           ) : (
             <div className="space-y-2">
               {upcomingEvents.map(event => (
                 <div
                   key={event.id}
                   onClick={() => onEventClick?.(event)}
-                  className="p-2 bg-gray-900 rounded border border-gray-700 hover:border-gray-600 cursor-pointer transition-colors"
+                  className="p-2 aurora-card rounded aurora-glow-hover cursor-pointer transition-all duration-300"
                 >
                   <div className="flex items-start space-x-2">
-                    <div className={`w-2 h-2 rounded-full mt-1.5 ${getEventTypeColor(event.event_type)}`}></div>
+                    <div className="w-2 h-2 rounded-full mt-1.5"
+                         style={{ backgroundColor: getEventTypeColor(event.event_type) }}></div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-xs font-medium text-white truncate">{event.title}</p>
-                      <p className="text-xs text-gray-400">
+                      <p className="text-xs font-medium aurora-text-primary truncate">{event.title}</p>
+                      <p className="text-xs aurora-text-secondary">
                         {new Date(event.start_date).toLocaleDateString()}
                       </p>
-                      <div className="flex items-center space-x-2 text-xs text-gray-400 mt-1">
+                      <div className="flex items-center space-x-2 text-xs aurora-text-secondary mt-1">
                         <Clock className="w-3 h-3" />
                         <span>
                           {event.all_day ? 'All day' : formatTime(event.start_date)}

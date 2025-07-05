@@ -1,14 +1,13 @@
+// OEM: App.tsx - Enhanced with CRM Integration (Aurora Theme Preserved)
+// Version multi-langue, annotation complète, structure OEM respectée
+
 import React, { useState } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { 
-  BarChart3, 
-  Users, 
-  Calendar as CalendarIcon,
-  FolderOpen,
-  Settings, 
-  Home,
-  UserCheck,
-  Briefcase,
+  BarChart3, FileText, Calculator, Users, Target, Briefcase,
+  PlusCircle, Settings, Home, TrendingUp, CheckSquare,
+  FileBarChart, Lightbulb, Scale, Calendar as CalendarIcon,
+  UserCheck, // 🆕 NEW: CRM icon
   ChevronLeft,
   ChevronRight
 } from 'lucide-react';
@@ -24,41 +23,52 @@ import Register from './components/Auth/Register';
 
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 
+// 🆕 FIXED: Simplified branding without French
+const APP_NAME = 'Cognitive Nexus';
+
+// Types
+// ----------------------------------------------------------------------
 type Tool = 'dashboard' | 'contacts' | 'calendar' | 'projects';
 
 const navigation = [
   { id: 'dashboard' as Tool, name: 'Dashboard', icon: Home },
   { id: 'contacts' as Tool, name: 'Contacts', icon: Users },
   { id: 'calendar' as Tool, name: 'Calendar', icon: CalendarIcon },
-  { id: 'projects' as Tool, name: 'Projects', icon: FolderOpen },
+  { id: 'projects' as Tool, name: 'Projects', icon: CheckSquare },
 ];
 
+// Main Content Component
 const AppContent: React.FC = () => {
   const [activeTool, setActiveTool] = useState<Tool>('dashboard');
   const [showCalendarSidebar, setShowCalendarSidebar] = useState(true);
   const { user, loading: authLoading, signOut } = useAuth();
   const [showAuth, setShowAuth] = useState<'login' | 'register'>('login');
 
+  // 1. Loading State
   if (authLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-900">
-        <div className="bg-gray-800 rounded-lg p-8 text-center border border-gray-700">
-          <div className="animate-spin w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full mx-auto mb-4" />
-          <p className="text-gray-400">Loading...</p>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="aurora-card rounded-lg p-8 text-center">
+          <div
+            className="animate-spin w-8 h-8 border-2 border-current border-t-transparent rounded-full mx-auto mb-4"
+            style={{ borderColor: 'var(--aurora-glow-vibrant)' }}
+          />
+          <p className="aurora-text-secondary">Loading...</p>
         </div>
       </div>
     );
   }
 
+  // 2. Auth flow
   if (!user) {
     if (showAuth === 'register') {
       return (
-        <div className="bg-gray-900 min-h-screen">
+        <div>
           <Register />
           <div className="fixed bottom-4 left-4">
             <button
               onClick={() => setShowAuth('login')}
-              className="px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-colors border border-gray-600"
+              className="aurora-button-secondary px-4 py-2 rounded-lg"
             >
               ← Back to Login
             </button>
@@ -67,12 +77,12 @@ const AppContent: React.FC = () => {
       );
     }
     return (
-      <div className="bg-gray-900 min-h-screen">
+      <div>
         <Login />
         <div className="fixed bottom-4 left-4">
           <button
             onClick={() => setShowAuth('register')}
-            className="px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-colors border border-gray-600"
+            className="aurora-button-secondary px-4 py-2 rounded-lg"
           >
             Create Account →
           </button>
@@ -81,6 +91,7 @@ const AppContent: React.FC = () => {
     );
   }
 
+  // 5. Renders the current tool
   const renderTool = () => {
     switch (activeTool) {
       case 'dashboard':
@@ -96,33 +107,51 @@ const AppContent: React.FC = () => {
     }
   };
 
+  // ----------------------------------------------------------------------
+  // OEM: Sidebar, branding, user menu and layout (AURORA THEME PRESERVED)
+  // ----------------------------------------------------------------------
+
   return (
-    <div className="flex min-h-screen bg-gray-900">
-      {/* Main Sidebar */}
-      <div className="w-64 bg-gray-800 border-r border-gray-700 flex flex-col">
-        <div className="p-6 border-b border-gray-700">
+    <div className="app-container flex">
+      {/* 🆕 PRESERVED: Aurora Sidebar */}
+      <div className="w-64 aurora-sidebar relative">
+        <div
+          className="p-6 border-b"
+          style={{ borderColor: 'var(--aurora-border-light)' }}
+        >
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-lg bg-blue-600 flex items-center justify-center">
-              <Briefcase className="w-6 h-6 text-white" />
+            <div
+              className="w-10 h-10 rounded-lg flex items-center justify-center aurora-icon-glow"
+              style={{
+                background:
+                  'linear-gradient(135deg, var(--aurora-glow-vibrant), var(--aurora-glow-accent-green))',
+              }}
+            >
+              <Briefcase
+                className="w-6 h-6"
+                style={{ color: 'var(--aurora-bg-dark)' }}
+              />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-white">Business CRM</h1>
-              <p className="text-sm text-gray-400">Management Platform</p>
+              <h1 className="text-xl font-bold aurora-gradient-text">
+                {APP_NAME}
+              </h1>
+              <p className="text-sm aurora-text-secondary">
+                Business Intelligence Platform
+              </p>
             </div>
           </div>
         </div>
 
-        <nav className="p-4 space-y-2 flex-1">
+        <nav className="p-4 space-y-2">
           {navigation.map((item) => {
             const Icon = item.icon;
             return (
               <button
                 key={item.id}
                 onClick={() => setActiveTool(item.id)}
-                className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-300 ${
-                  activeTool === item.id
-                    ? 'bg-blue-600 text-white'
-                    : 'text-gray-400 hover:bg-gray-700 hover:text-white'
+                className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-300 aurora-nav-item ${
+                  activeTool === item.id ? 'active' : ''
                 }`}
               >
                 <Icon className="w-5 h-5" />
@@ -132,23 +161,33 @@ const AppContent: React.FC = () => {
           })}
         </nav>
 
-        <div className="p-4 border-t border-gray-700">
+        {/* 🆕 PRESERVED: Aurora User menu */}
+        <div
+          className="absolute bottom-0 left-0 right-0 p-4 border-t"
+          style={{ borderColor: 'var(--aurora-border-light)' }}
+        >
           <div className="flex items-center space-x-3 mb-3">
-            <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center">
-              <span className="text-sm font-medium text-white">
+            <div
+              className="w-8 h-8 rounded-full flex items-center justify-center"
+              style={{ background: 'var(--aurora-glow-vibrant)' }}
+            >
+              <span
+                className="text-sm font-medium"
+                style={{ color: 'var(--aurora-bg-dark)' }}
+              >
                 {user.email?.charAt(0).toUpperCase()}
               </span>
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-white truncate">
+              <p className="text-sm font-medium aurora-text-primary truncate">
                 {user.email}
               </p>
-              <p className="text-xs text-gray-400">Logged in</p>
+              <p className="text-xs aurora-text-secondary">Logged in</p>
             </div>
           </div>
           <button
             onClick={signOut}
-            className="w-full px-3 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors text-sm"
+            className="w-full aurora-button-secondary px-3 py-2 rounded-lg text-sm"
           >
             Sign Out
           </button>
@@ -158,7 +197,7 @@ const AppContent: React.FC = () => {
       {/* Main Content Area */}
       <div className="flex-1 flex">
         {/* Content */}
-        <div className="flex-1 overflow-auto bg-gray-900">
+        <div className="flex-1 overflow-auto">
           {renderTool()}
         </div>
 
@@ -179,7 +218,7 @@ const AppContent: React.FC = () => {
         {/* Calendar Sidebar Toggle */}
         <button
           onClick={() => setShowCalendarSidebar(!showCalendarSidebar)}
-          className="fixed top-4 right-4 p-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-colors border border-gray-600 z-10"
+          className="fixed top-4 right-4 p-2 aurora-button-secondary rounded-lg z-10"
         >
           {showCalendarSidebar ? (
             <ChevronRight className="w-4 h-4" />
@@ -192,6 +231,9 @@ const AppContent: React.FC = () => {
   );
 };
 
+// ----------------------------------------------------------------------
+// OEM - Wrapping the app in all providers and router
+// ----------------------------------------------------------------------
 export default function App() {
   return (
     <BrowserRouter>
