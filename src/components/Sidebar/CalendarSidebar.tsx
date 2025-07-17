@@ -113,9 +113,6 @@ const CalendarSidebar: React.FC<CalendarSidebarProps> = ({ onEventClick, onDateS
       {/* Calendar Header */}
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-semibold aurora-text-primary">Calendar</h2>
-        <button className="p-1 aurora-text-secondary hover:aurora-text-primary">
-          <Plus className="w-4 h-4" />
-        </button>
       </div>
 
       {/* Mini Calendar */}

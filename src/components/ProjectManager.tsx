@@ -13,8 +13,7 @@ import {
   Search,
   BarChart3
 } from 'lucide-react';
-// 🆕 NEW ENHANCEMENT: CRM integration
-import { crmService } from '../services/crmService';
+import { dataService } from '../services/dataService';
 import { useAuth } from '../contexts/AuthContext';
 
 interface Task {
@@ -91,11 +90,11 @@ const ProjectManager: React.FC = () => {
   // 🆕 NEW ENHANCEMENT: Load data from Supabase
   useEffect(() => {
     if (user) {
-      loadData();
+      loadTasks();
     }
   }, [user]);
 
-  const loadData = async () => {
+  const loadTasks = async () => {
     if (!user) return;
     
     setLoading(true);
@@ -103,8 +102,8 @@ const ProjectManager: React.FC = () => {
     
     try {
       const [tasksData, contactsData] = await Promise.all([
-        crmService.getTasks(user.id),
-        crmService.getContacts(user.id)
+        dataService.getTasks(user.id),
+        dataService.getContacts(user.id)
       ]);
       
       setTasks(tasksData);
@@ -122,7 +121,7 @@ const ProjectManager: React.FC = () => {
     if (!user) return;
     
     try {
-      const newTask = await crmService.createTask({
+      const newTask = await dataService.createTask({
         user_id: user.id,
         title: taskData.title!,
         description: taskData.description,
@@ -144,7 +143,7 @@ const ProjectManager: React.FC = () => {
 
   const handleUpdateTask = async (taskId: string, updates: Partial<Task>) => {
     try {
-      const updatedTask = await crmService.updateTask(taskId, updates);
+      const updatedTask = await dataService.updateTask(taskId, updates);
       setTasks(prev => prev.map(task => task.id === taskId ? updatedTask : task));
       setEditingTask(null);
     } catch (err) {
@@ -154,7 +153,7 @@ const ProjectManager: React.FC = () => {
 
   const handleDeleteTask = async (taskId: string) => {
     try {
-      await crmService.deleteTask(taskId);
+      await dataService.deleteTask(taskId);
       setTasks(prev => prev.filter(task => task.id !== taskId));
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to delete task');
@@ -646,9 +645,7 @@ const ProjectManager: React.FC = () => {
         <div className="flex space-x-2">
           {[
             { id: 'kanban', name: 'Kanban', icon: BarChart3 },
-            { id: 'list', name: 'List', icon: CheckCircle },
-            { id: 'calendar', name: 'Calendar', icon: Calendar },
-            { id: 'projects', name: 'Projects', icon: Users }
+            { id: 'list', name: 'List', icon: CheckCircle }
           ].map((view) => {
             const Icon = view.icon;
             return (
@@ -724,20 +721,6 @@ const ProjectManager: React.FC = () => {
       <div className="mb-8">
         {activeView === 'kanban' && <KanbanView />}
         {activeView === 'list' && <ListView />}
-        {activeView === 'calendar' && (
-          <div className="aurora-card rounded-lg p-8 text-center">
-            <Calendar className="w-16 h-16 mx-auto mb-4 aurora-text-secondary" />
-            <h3 className="text-lg font-semibold aurora-text-primary mb-2">Calendar View</h3>
-            <p className="aurora-text-secondary">Calendar integration coming soon.</p>
-          </div>
-        )}
-        {activeView === 'projects' && (
-          <div className="aurora-card rounded-lg p-8 text-center">
-            <Users className="w-16 h-16 mx-auto mb-4 aurora-text-secondary" />
-            <h3 className="text-lg font-semibold aurora-text-primary mb-2">Projects View</h3>
-            <p className="aurora-text-secondary">Project management features coming soon.</p>
-          </div>
-        )}
       </div>
 
       {/* Task Form Modal */}
