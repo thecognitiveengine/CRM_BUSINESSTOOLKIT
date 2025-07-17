@@ -11,7 +11,8 @@ import {
   User,
   Tag,
   X,
-  AlertCircle
+  AlertCircle,
+  FolderOpen
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { dataService } from '../../services/dataService';
@@ -477,7 +478,7 @@ const TaskManager: React.FC = () => {
                   {project && (
                     <div className="flex items-center space-x-1">
                       <FolderOpen className="w-4 h-4" />
-                      <span>{project.name}</span>
+                      <span>Project</span>
                     </div>
                   )}
                 </div>
