@@ -28,6 +28,30 @@ const Login: React.FC = () => {
   };
 
   const getErrorMessage = (error: string) => {
+    if (error.includes('Network connection failed') || error.includes('Unable to connect')) {
+      return (
+        <div className="space-y-3">
+          <div className="flex items-center space-x-2">
+            <AlertCircle className="w-4 h-4 text-red-400" />
+            <span className="font-medium">Connection Failed</span>
+          </div>
+          
+          <div className="text-sm space-y-2">
+            <p>Unable to connect to the authentication service.</p>
+            <div className="p-3 rounded bg-yellow-500/10 border border-yellow-500/20">
+              <p className="text-yellow-300 font-medium mb-1">Troubleshooting Steps:</p>
+              <ul className="text-yellow-200 text-xs space-y-1">
+                <li>• Check your internet connection</li>
+                <li>• Verify Supabase service is running</li>
+                <li>• Check environment variables are configured</li>
+                <li>• Try refreshing the page</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      );
+    }
+    
     if (error.includes('Invalid login credentials') || error.includes('Authentication failed')) {
       return (
         <div className="space-y-3">

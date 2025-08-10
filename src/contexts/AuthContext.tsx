@@ -54,6 +54,18 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const signIn = async (email: string, password: string) => {
     try {
+      // Test connection before attempting sign in
+      const connectionTest = await fetch(import.meta.env.VITE_SUPABASE_URL + '/rest/v1/', {
+        method: 'HEAD',
+        headers: {
+          'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY
+        }
+      }).catch(() => null);
+      
+      if (!connectionTest) {
+        return { error: 'Unable to connect to authentication service. Please check your internet connection and try again.' };
+      }
+
       const { error } = await supabase.auth.signInWithPassword({
         email,
         password
@@ -65,12 +77,31 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       
       return {};
     } catch (error) {
-      return { error: 'An unexpected error occurred' };
+      console.error('Sign in error:', error);
+      if (error instanceof Error) {
+        if (error.message.includes('fetch')) {
+          return { error: 'Network connection failed. Please check your internet connection and try again.' };
+        }
+        return { error: error.message };
+      }
+      return { error: 'An unexpected error occurred during sign in' };
     }
   };
 
   const signUp = async (email: string, password: string, metadata?: any) => {
     try {
+      // Test connection before attempting sign up
+      const connectionTest = await fetch(import.meta.env.VITE_SUPABASE_URL + '/rest/v1/', {
+        method: 'HEAD',
+        headers: {
+          'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY
+        }
+      }).catch(() => null);
+      
+      if (!connectionTest) {
+        return { error: 'Unable to connect to authentication service. Please check your internet connection and try again.' };
+      }
+
       const { error } = await supabase.auth.signUp({
         email,
         password,
@@ -85,7 +116,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       
       return {};
     } catch (error) {
-      return { error: 'An unexpected error occurred' };
+      console.error('Sign up error:', error);
+      if (error instanceof Error) {
+        if (error.message.includes('fetch')) {
+          return { error: 'Network connection failed. Please check your internet connection and try again.' };
+        }
+        return { error: error.message };
+      }
+      return { error: 'An unexpected error occurred during sign up' };
     }
   };
 
